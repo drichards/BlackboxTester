@@ -1,0 +1,12 @@
+Signatures:
+    ADT: ĮSt٠ackInt 
+        empty : -> StackInt
+        push : StackInt * integer -> StackInt
+        pop : StackInt -> integer
+        isEmpty : StackInt -> boolean
+    ADT: StackInt 
+        empty : -> StackInt
+        push : StackInt * integer -> StackInt
+        pop : StackInt -> integer
+        isEmpty : StackInt -> boolean
+Equations:

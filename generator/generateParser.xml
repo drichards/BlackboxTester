@@ -1,0 +1,28 @@
+<project name="BlackboxTesterGenerateParser" default="generate" basedir="../">
+    <description>
+        generate the parser for this blackbox test generator
+    </description>
+	
+    <!-- set global properties for this build -->
+    <property name="generatedSrcDest" value="src/parser/generated"/>
+    <property name="generatorBinaries" value="generator/javacc-5.0/bin"/>
+    <property name="generatorInput" value="blackboxTester"/>
+    
+    <target name="generate">
+        <exec executable="./${generatorBinaries}/jjtree">
+            <arg value="-OUTPUT_DIRECTORY=${generatedSrcDest}" />
+        	<arg value="generator/${generatorInput}.jjt" />
+        </exec>
+        <exec executable="./${generatorBinaries}/javacc">
+            <arg value="-OUTPUT_DIRECTORY=${generatedSrcDest}" />
+            <arg value="${generatedSrcDest}/${generatorInput}.jj" />
+        </exec>
+        <delete file="${generatedSrcDest}/${generatorInput}.jj" />
+    </target>
+	
+	<target name="clean">
+		<delete>
+			<fileset dir="${generatedSrcDest}"/>
+		</delete>
+	</target>
+</project>
