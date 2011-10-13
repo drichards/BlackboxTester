@@ -18,7 +18,22 @@ options {
 
 PARSER_BEGIN(InputParser)
 package parser.generated;
-public class InputParser { }
+
+import parser.ast.*;
+import java.util.ArrayList;
+import java.util.Stack;
+
+public class InputParser { 
+    protected Stack<ArrayList<Object>> currentObjectList = new Stack<ArrayList<Object>>();
+    
+    public <T> void openListContext(Class<T> className) {
+        currentObjectList.push((ArrayList<Object>)new ArrayList<T>());
+    }
+    
+    public <T> ArrayList<T> popCurrentObjectList(Class<T> className) {
+        return (ArrayList<T>)currentObjectList.pop();
+    }
+}
 
 PARSER_END(InputParser)
 
@@ -33,7 +48,7 @@ SKIP :
 /* string constants */
 TOKEN:
 {
-    < INTEGER: "integer"> |
+    < INTEGER: "int"> |
     < STRING: "string"> |
     < CHARACTER: "character"> |
     < BOOLEAN: "boolean"> |
@@ -101,40 +116,80 @@ TOKEN :
     < ID: ((<INITIAL> | <PECULIAR_ID>) (<SUBSEQUENT>)*)  >
 }
 
-SimpleNode Input() :
+Input Input() :
 {}
 {
+    { openListContext(Signature.class); }
     <SIGNATURES> (Signature())+ <EQUATIONS> <EOF>
-    { return jjtThis; }
+    { return new Input(popCurrentObjectList(Signature.class), null); }
 }
 
 void Signature() :
-{}
 {
-    <ADT> Typename() (OperationSpec())+
+    String typename;
+}
+{
+    { openListContext(OpSpec.class); }
+    <ADT> typename=Typename() (OperationSpec())+
+    {
+        ArrayList<OpSpec> specs = popCurrentObjectList(OpSpec.class);
+        currentObjectList.peek().add(new Signature(typename, specs));
+    }
 }
 
-void Typename() :
+String Typename() :
 {}
 {
     <ID>
+    { return token.image; }
 }
 
 void OperationSpec() :
-{}
 {
-    Operation() <COLON> (Type() (<ASTERIX> Type())*)? "->" Type()
+    String operation;
+    Type returnType;
+}
+{
+    { openListContext(Type.class); }
+    operation=Operation() <COLON> (Type(true) (<ASTERIX> Type(true))*)? "->" returnType=Type(false)
+    { 
+        ArrayList<Type> argTypes = popCurrentObjectList(Type.class);
+        currentObjectList.peek().add(new OpSpec(operation, argTypes, returnType)); 
+    }
 }
 
-void Operation() :
+String Operation() :
 {}
 {
     <ID>
+    { return token.image; }
 }
 
-void Type() :
-{}
+Type Type(boolean addToListContext) :
 {
-    <INTEGER>|<BOOLEAN>|<CHARACTER>|<STRING>|<ID>
+    Type type = null;
+}
+{
+    (<INTEGER>|<BOOLEAN>|<CHARACTER>|<STRING>|<ID>)
+    
+    {
+        if (token.kind == InputParserConstants.ID) {
+            type = new DynamicType(token.image);
+        } else if (token.kind == InputParserConstants.INTEGER) {
+            type = new PrimitiveType.IntegerType();
+        } else if (token.kind == InputParserConstants.BOOLEAN) {
+            type = new PrimitiveType.BooleanType();
+        } else if (token.kind == InputParserConstants.CHARACTER) {
+            type = new PrimitiveType.CharacterType();
+        } else if (token.kind == InputParserConstants.STRING) {
+            type = new PrimitiveType.StringType();
+        }
+        
+        if (addToListContext) {
+            currentObjectList.peek().add(type);
+        }
+        
+        return type;
+    }
 }
 

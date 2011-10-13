@@ -1,6 +1,8 @@
 package parser;
 
 import java.io.*;
+
+import parser.ast.*;
 import parser.generated.*;
 
 public class Parser {
@@ -9,7 +11,6 @@ public class Parser {
         FileInputStream inputStream = new FileInputStream(file);
 
         InputParser parser = new InputParser(inputStream, "UTF8");
-        SimpleNode node = parser.Input();
-        node.dump("");
+        Input node = parser.Input();
     }
 }

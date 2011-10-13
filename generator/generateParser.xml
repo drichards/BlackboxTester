@@ -9,15 +9,15 @@
     <property name="generatorInput" value="blackboxTester"/>
     
     <target name="generate">
-        <exec executable="./${generatorBinaries}/jjtree">
+        <exec executable="./${generatorBinaries}/javacc">
             <arg value="-OUTPUT_DIRECTORY=${generatedSrcDest}" />
         	<arg value="generator/${generatorInput}.jjt" />
         </exec>
-        <exec executable="./${generatorBinaries}/javacc">
+        <!--<exec executable="./${generatorBinaries}/javacc">
             <arg value="-OUTPUT_DIRECTORY=${generatedSrcDest}" />
             <arg value="${generatedSrcDest}/${generatorInput}.jj" />
         </exec>
-        <delete file="${generatedSrcDest}/${generatorInput}.jj" />
+        <delete file="${generatedSrcDest}/${generatorInput}.jj" />-->
     </target>
 	
 	<target name="clean">
