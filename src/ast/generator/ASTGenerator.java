@@ -13,7 +13,7 @@ import ast.FunctionCall;
 import ast.PrimitiveAST;
 
 public class ASTGenerator {
-	private static int DEPTH = 3;
+	private static int DEPTH = 2;
 	
 	private static HashMap<Type, ArrayList<AST>> trees = 
 		new HashMap<Type, ArrayList<AST>>();
@@ -32,13 +32,13 @@ public class ASTGenerator {
 						if (argType.isPrimitive()) {
 							data = new ArrayList<AST>();
 							if (argType instanceof PrimitiveType.BooleanType) {
-								data.add((AST)new PrimitiveAST.BooleanAST());
+								data.add(new PrimitiveAST.BooleanAST());
 							} else if (argType instanceof PrimitiveType.CharacterType) {
-								data.add((AST)new PrimitiveAST.CharacterAST());
+								data.add(new PrimitiveAST.CharacterAST());
 							} else if (argType instanceof PrimitiveType.StringType) {
-								data.add((AST)new PrimitiveAST.StringAST());
+								data.add(new PrimitiveAST.StringAST());
 							} else if (argType instanceof PrimitiveType.IntegerType) {
-								data.add((AST)new PrimitiveAST.IntegerAST());
+								data.add(new PrimitiveAST.IntegerAST());
 							}
 						} else {
 							data = lastLayer.get(argType);
@@ -83,6 +83,7 @@ public class ASTGenerator {
 			}
 			
 			lastLayer = currentLayer;
+			currentLayer = new HashMap<Type, ArrayList<AST>>();
 		}
 		
 		ArrayList<AST> returnList = new ArrayList<AST>();
@@ -103,7 +104,7 @@ public class ASTGenerator {
 		
 		if (astList == null) {
 			astList = new ArrayList<AST>();
-			lastLayer.put(type, astList);
+			currentLayer.put(type, astList);
 		}
 		
 		return astList;

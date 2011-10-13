@@ -1,6 +1,6 @@
 package ast;
 
-public abstract class PrimitiveAST {
+public abstract class PrimitiveAST implements AST {
 	private String type;
 	
 	protected PrimitiveAST(String type) {

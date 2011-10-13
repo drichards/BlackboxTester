@@ -1,7 +1,7 @@
 Signatures:
     ADT: ĮSt٠ackInt 
         empty : -> StackInt
-        push : StackInt * integer -> StackInt
-        pop : StackInt -> integer
+        push : StackInt * int -> StackInt
+        pop : StackInt -> int
         isEmpty : StackInt -> boolean
 Equations:
