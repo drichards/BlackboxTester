@@ -14,5 +14,14 @@ public class DynamicType implements Type {
 	public boolean isPrimitive() {
 		return false;
 	}
+	
+	public boolean equals(Object other) {
+		return (other instanceof DynamicType) && 
+		((DynamicType)other).getValue().equals(this.value);
+	}
+
+	public int hashCode() {
+		return value.hashCode();
+	}
 
 }

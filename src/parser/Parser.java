@@ -1,16 +1,17 @@
 package parser;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
 
-import parser.ast.*;
-import parser.generated.*;
+import parser.ast.Input;
+import parser.generated.InputParser;
 
 public class Parser {
-    public static void main(String[] args) throws Exception {
+    public static Input parse() throws Exception {
         File file = new File("assets/test.txt");
         FileInputStream inputStream = new FileInputStream(file);
 
         InputParser parser = new InputParser(inputStream, "UTF8");
-        Input node = parser.Input();
+        return parser.Input();
     }
 }
