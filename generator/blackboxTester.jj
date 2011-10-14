@@ -181,14 +181,14 @@ TOKEN:
 /* identifier rules */
 TOKEN :
 {
+    < ID: ((<INITIAL> | <PECULIAR_ID>) (<SUBSEQUENT>)*)  > |
     < PECULIAR_ID: (<PLUS>|<MINUS>|<DOTDOTDOT>|<ARROW>) > |
-    < SPECIAL_SUBSEQUENT: (<PLUS>|<MINUS>|<DOT>|<AT>) > |
-    < SUBSEQUENT: (<INITIAL>|["0"-"9"]|<SPECIAL_SUBSEQUENT>|<ND>|<MC>|<ME>) > |
-    < INLINE_HEX_ESCAPE: <HEX_ESCAPE> (["0"-"9","a"-"f","A"-"F"])+ > |
+    < INITIAL: (<CONSTITUENT>|<INLINE_HEX_ESCAPE>|<SPECIAL_INITIAL>) > |
     < SPECIAL_INITIAL: (<EXCLAMATION>|<DOLLAR>|<PERCENT>|<AMP>|<ASTERIX>|<SLASH>|<COLON>|<GREATER_THAN>|<EQUALS>|<LESS_THAN>|<QUESTION_MARK>|<CARROT>|<UNDERSCORE>|<TILDA>) > |
     < CONSTITUENT: (["a"-"z","A"-"Z"])|<LU>|<LL>|<LT>|<LM>|<LO>|<MN>|<NL>|<NO>|<PD>|<PC>|<PO>|<SC>|<SM>|<SK>|<SO>|<CO>> |
-    < INITIAL: (<INLINE_HEX_ESCAPE>|<CONSTITUENT>|<SPECIAL_INITIAL>) > |
-    < ID: ((<INITIAL> | <PECULIAR_ID>) (<SUBSEQUENT>)*)  >
+    < SUBSEQUENT: (<INITIAL>|["0"-"9"]|<SPECIAL_SUBSEQUENT>|<ND>|<MC>|<ME>) > |
+    < SPECIAL_SUBSEQUENT: (<PLUS>|<MINUS>|<DOT>|<AT>) > |
+    < INLINE_HEX_ESCAPE: <HEX_ESCAPE> (["0"-"9","a"-"f","A"-"F"])+ >
 }
 
 Input Input() :

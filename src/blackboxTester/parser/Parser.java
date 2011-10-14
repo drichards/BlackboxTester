@@ -8,8 +8,8 @@ import blackboxTester.parser.generated.InputParser;
 
 
 public class Parser {
-    public static Input parse() throws Exception {
-        File file = new File("assets/test.txt");
+    public static Input parse(String inputFileName) throws Exception {
+        File file = new File(inputFileName);
         FileInputStream inputStream = new FileInputStream(file);
 
         InputParser parser = new InputParser(inputStream, "UTF8");

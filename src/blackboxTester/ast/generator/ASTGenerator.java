@@ -14,7 +14,7 @@ import blackboxTester.parser.ast.Type;
 
 
 public class ASTGenerator {
-	private static int DEPTH = 10;
+	private static int DEPTH = 3;
 	
 	private static HashMap<Type, ArrayList<AST>> trees = 
 		new HashMap<Type, ArrayList<AST>>();

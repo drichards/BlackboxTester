@@ -5,4 +5,12 @@ Signatures:
         pop : StackInt -> StackInt
         isEmpty : StackInt -> boolean
         top : StackInt -> int
+    ADT: Queue
+    	new : -> Queue
+    	add : Queue * string -> Queue
+    	del : Queue -> Queue
+    	head : Queue -> string
+    	empty : Queue -> boolean
+   		
+    
 Equations:
