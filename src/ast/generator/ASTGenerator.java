@@ -13,7 +13,7 @@ import ast.FunctionCall;
 import ast.PrimitiveAST;
 
 public class ASTGenerator {
-	private static int DEPTH = 2;
+	private static int DEPTH = 10;
 	
 	private static HashMap<Type, ArrayList<AST>> trees = 
 		new HashMap<Type, ArrayList<AST>>();
@@ -44,12 +44,14 @@ public class ASTGenerator {
 							data = lastLayer.get(argType);
 						}
 						
-						if (data != null && data.size() > 0) {
-							if (p == null) {
-								p = new Permutations(data);
-							} else {
-								p.addData(data);
-							}
+						if (data == null) {
+							data = new ArrayList<AST>();
+						}
+						
+						if (p == null) {
+							p = new Permutations(data);
+						} else {
+							p.addData(data);
 						}
 					}
 					

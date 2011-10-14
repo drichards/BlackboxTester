@@ -75,21 +75,51 @@ public interface InputParserConstants {
   /** RegularExpression Id. */
   int LU = 36;
   /** RegularExpression Id. */
-  int PECULIAR_ID = 37;
+  int LL = 37;
   /** RegularExpression Id. */
-  int SPECIAL_SUBSEQUENT = 38;
+  int LT = 38;
   /** RegularExpression Id. */
-  int SUBSEQUENT = 39;
+  int LM = 39;
   /** RegularExpression Id. */
-  int INLINE_HEX_ESCAPE = 40;
+  int LO = 40;
   /** RegularExpression Id. */
-  int SPECIAL_INITIAL = 41;
+  int MN = 41;
   /** RegularExpression Id. */
-  int CONSTITUENT = 42;
+  int NL = 42;
   /** RegularExpression Id. */
-  int INITIAL = 43;
+  int NO = 43;
   /** RegularExpression Id. */
-  int ID = 44;
+  int PD = 44;
+  /** RegularExpression Id. */
+  int PC = 45;
+  /** RegularExpression Id. */
+  int PO = 46;
+  /** RegularExpression Id. */
+  int SC = 47;
+  /** RegularExpression Id. */
+  int SM = 48;
+  /** RegularExpression Id. */
+  int SK = 49;
+  /** RegularExpression Id. */
+  int SO = 50;
+  /** RegularExpression Id. */
+  int CO = 51;
+  /** RegularExpression Id. */
+  int PECULIAR_ID = 52;
+  /** RegularExpression Id. */
+  int SPECIAL_SUBSEQUENT = 53;
+  /** RegularExpression Id. */
+  int SUBSEQUENT = 54;
+  /** RegularExpression Id. */
+  int INLINE_HEX_ESCAPE = 55;
+  /** RegularExpression Id. */
+  int SPECIAL_INITIAL = 56;
+  /** RegularExpression Id. */
+  int CONSTITUENT = 57;
+  /** RegularExpression Id. */
+  int INITIAL = 58;
+  /** RegularExpression Id. */
+  int ID = 59;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -133,6 +163,21 @@ public interface InputParserConstants {
     "<MC>",
     "<ME>",
     "<LU>",
+    "<LL>",
+    "<LT>",
+    "<LM>",
+    "<LO>",
+    "<MN>",
+    "<NL>",
+    "<NO>",
+    "<PD>",
+    "<PC>",
+    "<PO>",
+    "<SC>",
+    "<SM>",
+    "<SK>",
+    "<SO>",
+    "<CO>",
     "<PECULIAR_ID>",
     "<SPECIAL_SUBSEQUENT>",
     "<SUBSEQUENT>",

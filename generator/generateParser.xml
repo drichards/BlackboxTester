@@ -11,13 +11,8 @@
     <target name="generate">
         <exec executable="./${generatorBinaries}/javacc">
             <arg value="-OUTPUT_DIRECTORY=${generatedSrcDest}" />
-        	<arg value="generator/${generatorInput}.jjt" />
+        	<arg value="generator/${generatorInput}.jj" />
         </exec>
-        <!--<exec executable="./${generatorBinaries}/javacc">
-            <arg value="-OUTPUT_DIRECTORY=${generatedSrcDest}" />
-            <arg value="${generatedSrcDest}/${generatorInput}.jj" />
-        </exec>
-        <delete file="${generatedSrcDest}/${generatorInput}.jj" />-->
     </target>
 	
 	<target name="clean">
