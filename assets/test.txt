@@ -2,6 +2,7 @@ Signatures:
     ADT: ĮSt٠ackInt 
         empty : -> StackInt
         push : StackInt * int -> StackInt
-        pop : StackInt -> int
+        pop : StackInt -> StackInt
         isEmpty : StackInt -> boolean
+        top : StackInt -> int
 Equations:
