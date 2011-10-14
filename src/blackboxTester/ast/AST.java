@@ -1,4 +1,4 @@
-package ast;
+package blackboxTester.ast;
 
 public interface AST {
 	public String toString();

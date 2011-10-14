@@ -1,4 +1,4 @@
-package parser.ast;
+package blackboxTester.parser.ast;
 
 public class DynamicType implements Type {
 	private final String value;

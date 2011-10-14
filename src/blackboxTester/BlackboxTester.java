@@ -1,7 +1,8 @@
-import ast.AST;
-import ast.generator.ASTGenerator;
-import parser.Parser;
-import parser.ast.Input;
+package blackboxTester;
+import blackboxTester.ast.AST;
+import blackboxTester.ast.generator.ASTGenerator;
+import blackboxTester.parser.Parser;
+import blackboxTester.parser.ast.Input;
 
 
 public class BlackboxTester {

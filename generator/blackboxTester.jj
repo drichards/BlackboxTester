@@ -17,9 +17,9 @@ options {
 }
 
 PARSER_BEGIN(InputParser)
-package parser.generated;
+package blackboxTester.parser.generated;
 
-import parser.ast.*;
+import blackboxTester.parser.ast.*;
 import java.util.ArrayList;
 import java.util.Stack;
 

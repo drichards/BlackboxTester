@@ -1,4 +1,4 @@
-package ast.generator;
+package blackboxTester.ast.generator;
 
 import java.util.Random;
 

@@ -1,4 +1,4 @@
-package parser.ast;
+package blackboxTester.parser.ast;
 
 import java.util.ArrayList;
 

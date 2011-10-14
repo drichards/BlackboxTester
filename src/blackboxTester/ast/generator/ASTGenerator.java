@@ -1,16 +1,17 @@
-package ast.generator;
+package blackboxTester.ast.generator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import parser.ast.OpSpec;
-import parser.ast.PrimitiveType;
-import parser.ast.Signature;
-import parser.ast.Type;
+import blackboxTester.ast.AST;
+import blackboxTester.ast.FunctionCall;
+import blackboxTester.ast.PrimitiveAST;
+import blackboxTester.parser.ast.OpSpec;
+import blackboxTester.parser.ast.PrimitiveType;
+import blackboxTester.parser.ast.Signature;
+import blackboxTester.parser.ast.Type;
 
-import ast.AST;
-import ast.FunctionCall;
-import ast.PrimitiveAST;
+
 
 public class ASTGenerator {
 	private static int DEPTH = 10;
@@ -26,6 +27,8 @@ public class ASTGenerator {
 		for (int i = 0; i < DEPTH; i++) {
 			for (Signature sig : signatures) {
 				for (OpSpec opSpec : sig.getOpSpecs()) {
+					if (opSpec.hasOnlyPrimitiveArgs() && i != 0) { continue; }
+					
 					Permutations p = null;
 					for (Type argType : opSpec.getArgTypes()) {
 						ArrayList<AST> data;

@@ -1,10 +1,11 @@
-package parser;
+package blackboxTester.parser;
 
 import java.io.File;
 import java.io.FileInputStream;
 
-import parser.ast.Input;
-import parser.generated.InputParser;
+import blackboxTester.parser.ast.Input;
+import blackboxTester.parser.generated.InputParser;
+
 
 public class Parser {
     public static Input parse() throws Exception {

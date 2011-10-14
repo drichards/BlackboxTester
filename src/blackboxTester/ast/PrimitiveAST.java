@@ -1,4 +1,4 @@
-package ast;
+package blackboxTester.ast;
 
 public abstract class PrimitiveAST implements AST {
 	private String type;

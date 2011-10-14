@@ -1,4 +1,4 @@
-package parser.ast;
+package blackboxTester.parser.ast;
 
 public abstract class PrimitiveType implements Type {
 	protected String type;
