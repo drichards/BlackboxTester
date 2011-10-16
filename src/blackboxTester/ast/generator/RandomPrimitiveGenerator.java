@@ -64,7 +64,7 @@ public class RandomPrimitiveGenerator {
 		} else if (randomInt == 7) {
 			return "\\";
 		} else if (randomInt == 8) {
-			return "\"+3";
+			return "\\\"+3";
 		} else if (randomInt == 9) {
 			return "@$(*C(XCLZKJKDFLN fnjknzcx89h \\";
 		} else {
