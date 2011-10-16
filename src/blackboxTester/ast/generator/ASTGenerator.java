@@ -38,7 +38,7 @@ public class ASTGenerator {
 	 * this set separately because we only want to apply the provided function
 	 * calls to the last layer of generated syntax trees in order to generate
 	 * the next layer.
-	 */
+	 */ 
 	private static HashMap<Type, ArrayList<AST>> lastLayer = 
 		new HashMap<Type, ArrayList<AST>>();
 	/**
