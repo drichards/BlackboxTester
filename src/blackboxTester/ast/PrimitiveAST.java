@@ -2,52 +2,53 @@ package blackboxTester.ast;
 
 import blackboxTester.ast.generator.RandomPrimitiveGenerator;
 
+/**
+ * The superclass of all primitive abstract syntax trees (ASTs).
+ *
+ */
 public abstract class PrimitiveAST implements AST {
-	private String type;
+	protected PrimitiveAST() {}
 	
-	protected PrimitiveAST(String type) {
-		this.type = type;
-	}
-	
+	@Override
 	public boolean isPrimitive() {
 		return true;
 	}
 	
+	/**
+	 * A primitive abstract syntax tree representing booleans.
+	 */
 	public static class BooleanAST extends PrimitiveAST { 
-		public BooleanAST() {
-			super("boolean");
-		}
-		
+		@Override
 		public String toString() {
 			return String.valueOf(RandomPrimitiveGenerator.genBool());
 		}
 	}
 	
+	/**
+	 * A primitive abstract syntax tree representing characters.
+	 */
 	public static class CharacterAST extends PrimitiveAST { 
-		public CharacterAST() {
-			super("character");
-		}
-		
+		@Override
 		public String toString() {
 			return String.valueOf(RandomPrimitiveGenerator.genChar());
 		}
 	}
 	
+	/**
+	 * A primitive abstract syntax tree representing integers.
+	 */
 	public static class IntegerAST extends PrimitiveAST { 
-		public IntegerAST() {
-			super("int");
-		}
-		
+		@Override
 		public String toString() {
 			return String.valueOf(RandomPrimitiveGenerator.genInt());
 		}
 	}
 	
+	/**
+	 * A primitive abstract syntax tree representing strings.
+	 */
 	public static class StringAST extends PrimitiveAST { 
-		public StringAST() {
-			super("string");
-		}
-		
+		@Override
 		public String toString() {
 			return "\"" + RandomPrimitiveGenerator.genString() + "\"";
 		}
