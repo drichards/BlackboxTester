@@ -22,9 +22,12 @@ package blackboxTester.parser.generated;
 import blackboxTester.parser.ast.*;
 import java.util.ArrayList;
 import java.util.Stack;
+import java.util.HashSet;
 
 public class InputParser { 
     protected Stack<ArrayList<Object>> currentObjectList = new Stack<ArrayList<Object>>();
+    private HashSet<String> declaredTypes =  new HashSet<String>();
+    private HashSet<String> seenTypes = new HashSet<String>();
     
     public <T> void openListContext(Class<T> className) {
         currentObjectList.push((ArrayList<Object>)new ArrayList<T>());
@@ -196,7 +199,14 @@ Input Input() :
 {
     { openListContext(Signature.class); }
     <SIGNATURES> (Signature())+ <EQUATIONS> <EOF>
-    { return new Input(popCurrentObjectList(Signature.class), null); }
+    {
+        for (String type : seenTypes) {
+            if (!declaredTypes.contains(type)) {
+                throw new ParseException("Undeclared type: \"" + type + "\"");
+            }
+        } 
+        return new Input(popCurrentObjectList(Signature.class), null); 
+    }
 }
 
 void Signature() :
@@ -207,6 +217,7 @@ void Signature() :
     { openListContext(OpSpec.class); }
     <ADT> typename=Typename() (OperationSpec())+
     {
+        declaredTypes.add(typename);
         ArrayList<OpSpec> specs = popCurrentObjectList(OpSpec.class);
         currentObjectList.peek().add(new Signature(typename, specs));
     }
@@ -216,7 +227,9 @@ String Typename() :
 {}
 {
     <ID>
-    { return token.image; }
+    { 
+        return token.image; 
+    }
 }
 
 void OperationSpec() :
@@ -249,6 +262,7 @@ Type Type(boolean addToListContext) :
     
     {
         if (token.kind == InputParserConstants.ID) {
+            seenTypes.add(token.image);
             type = new DynamicType(token.image);
         } else if (token.kind == InputParserConstants.INTEGER) {
             type = new PrimitiveType.IntegerType();

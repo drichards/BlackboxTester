@@ -4,9 +4,12 @@ package blackboxTester.parser.generated;
 import blackboxTester.parser.ast.*;
 import java.util.ArrayList;
 import java.util.Stack;
+import java.util.HashSet;
 
 public class InputParser implements InputParserConstants {
     protected Stack<ArrayList<Object>> currentObjectList = new Stack<ArrayList<Object>>();
+    private HashSet<String> declaredTypes =  new HashSet<String>();
+    private HashSet<String> seenTypes = new HashSet<String>();
 
     public <T> void openListContext(Class<T> className) {
         currentObjectList.push((ArrayList<Object>)new ArrayList<T>());
@@ -30,7 +33,12 @@ public class InputParser implements InputParserConstants {
     }
     jj_consume_token(EQUATIONS);
     jj_consume_token(0);
-      {if (true) return new Input(popCurrentObjectList(Signature.class), null);}
+        for (String type : seenTypes) {
+            if (!declaredTypes.contains(type)) {
+                {if (true) throw new ParseException("Undeclared type: \u005c"" + type + "\u005c"");}
+            }
+        }
+        {if (true) return new Input(popCurrentObjectList(Signature.class), null);}
     throw new Error("Missing return statement in function");
   }
 
@@ -48,13 +56,14 @@ public class InputParser implements InputParserConstants {
         break label_2;
       }
     }
+        declaredTypes.add(typename);
         ArrayList<OpSpec> specs = popCurrentObjectList(OpSpec.class);
         currentObjectList.peek().add(new Signature(typename, specs));
   }
 
   final public String Typename() throws ParseException {
     jj_consume_token(ID);
-      {if (true) return token.image;}
+        {if (true) return token.image;}
     throw new Error("Missing return statement in function");
   }
 
@@ -108,6 +117,7 @@ public class InputParser implements InputParserConstants {
       throw new ParseException();
     }
         if (token.kind == InputParserConstants.ID) {
+            seenTypes.add(token.image);
             type = new DynamicType(token.image);
         } else if (token.kind == InputParserConstants.INTEGER) {
             type = new PrimitiveType.IntegerType();
@@ -190,65 +200,20 @@ public class InputParser implements InputParserConstants {
     finally { jj_save(8, xla); }
   }
 
-  private boolean jj_3_7() {
-    if (jj_scan_token(CHARACTER)) return true;
-    return false;
-  }
-
-  private boolean jj_3_9() {
-    if (jj_scan_token(ID)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_7() {
-    if (jj_scan_token(ID)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_8() {
-    if (jj_scan_token(ID)) return true;
-    return false;
-  }
-
-  private boolean jj_3_4() {
-    if (jj_3R_6()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3_3()) { jj_scanpos = xsp; break; }
-    }
-    return false;
-  }
-
-  private boolean jj_3_6() {
-    if (jj_scan_token(BOOLEAN)) return true;
-    return false;
-  }
-
-  private boolean jj_3_8() {
-    if (jj_scan_token(STRING)) return true;
-    return false;
-  }
-
-  private boolean jj_3_1() {
-    if (jj_3R_4()) return true;
-    return false;
-  }
-
   private boolean jj_3_2() {
     if (jj_3R_5()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_4() {
-    if (jj_scan_token(ADT)) return true;
-    if (jj_3R_7()) return true;
     return false;
   }
 
   private boolean jj_3R_5() {
     if (jj_3R_8()) return true;
     if (jj_scan_token(COLON)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_4() {
+    if (jj_scan_token(ADT)) return true;
+    if (jj_3R_7()) return true;
     return false;
   }
 
@@ -279,6 +244,51 @@ public class InputParser implements InputParserConstants {
     }
     }
     }
+    return false;
+  }
+
+  private boolean jj_3_1() {
+    if (jj_3R_4()) return true;
+    return false;
+  }
+
+  private boolean jj_3_7() {
+    if (jj_scan_token(CHARACTER)) return true;
+    return false;
+  }
+
+  private boolean jj_3_9() {
+    if (jj_scan_token(ID)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_8() {
+    if (jj_scan_token(ID)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_7() {
+    if (jj_scan_token(ID)) return true;
+    return false;
+  }
+
+  private boolean jj_3_4() {
+    if (jj_3R_6()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3_3()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
+  private boolean jj_3_6() {
+    if (jj_scan_token(BOOLEAN)) return true;
+    return false;
+  }
+
+  private boolean jj_3_8() {
+    if (jj_scan_token(STRING)) return true;
     return false;
   }
 

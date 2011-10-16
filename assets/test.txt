@@ -1,5 +1,5 @@
 Signatures:
-    ADT: ĮSt٠ackInt 
+    ADT: StackInt 
         empty : -> StackInt
         push : StackInt * int -> StackInt
         pop : StackInt -> StackInt

@@ -3,6 +3,7 @@ package blackboxTester.parser.generated;
 import blackboxTester.parser.ast.*;
 import java.util.ArrayList;
 import java.util.Stack;
+import java.util.HashSet;
 
 /** Token Manager. */
 public class InputParserTokenManager implements InputParserConstants
