@@ -1,0 +1,43 @@
+Team members:
+    Michael Thompson - thompson.mi@husky.neu.edu
+    Victor Jiang     - jiang.v@husky.neu.edu
+    David Richards   - dirich@ccs.neu.edu
+    Seth Tringale    - stringale@gmail.com
+
+To compile:
+    javac -d bin -sourcepath src src/*/*.java
+
+To run:
+    ./cs4500 file1 file2
+
+    where
+
+    file1 is the name of an existing file that contains
+    textual input in the syntax specified below.
+
+    file2 is the name of a file to be created by your software;
+    when your program terminates, that file must contain the
+    textual output of your program in the format specified
+    below.
+
+
+Software used:
+    JavaCC was used to generate the parser generator for
+    this project.  The license for JavaCC can be found at 
+    generator/javacc-5.0/LICENSE
+    More info on JavaCC can be found at http://javacc.java.net
+
+Source Layout:
+    The main program is run from blackboxTester.BlackboxTester.  That
+    calls into the following modules.
+
+    blackboxTester.parser.Parser
+        This is the main class for the parser.  It parses the input
+        using the generated classes in blackboxTester.parser.generated.*.
+        The returned code is an abstract syntax tree modeled by
+        blackboxTester.parser.ast.*;
+
+    blackboxTester.ast.generator.ASTGenerator
+        This takes the parsed signatures and generates a series of
+        abstract syntax trees that follow the signatures.  They are
+        created using the objects in blackboxTester.ast.*
