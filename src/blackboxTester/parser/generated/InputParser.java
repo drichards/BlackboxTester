@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Stack;
 import java.util.HashSet;
 
+@SuppressWarnings("unchecked")
 public class InputParser implements InputParserConstants {
     protected Stack<ArrayList<Object>> currentObjectList = new Stack<ArrayList<Object>>();
     private HashSet<String> declaredTypes =  new HashSet<String>();
