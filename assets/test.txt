@@ -1,16 +1,35 @@
 Signatures:
-    ADT: StackInt 
-        empty : -> StackInt
-        push : StackInt * int -> StackInt
-        pop : StackInt -> StackInt
-        isEmpty : StackInt -> boolean
-        top : StackInt -> int
-    ADT: Queue
-    	new : -> Queue
-    	add : Queue * string -> Queue
-    	del : Queue -> Queue
-    	head : Queue -> string
-    	empty : Queue -> boolean
-   		
+
+ADT: List
+
+    emptyList   :              ->  List
+    cons        :  int * List  ->  List
+    isEmpty     :  List        ->  boolean
+    first       :  List        ->  int
+    rest        :  List        ->  List
+    toSet       :  List        ->  Set
+
+ADT: Set
+
+    emptySet     :             ->  Set
+    adjoin       :  Set * int  ->  Set
+    isEmpty      :  Set        ->  boolean
+    choose       :  Set        ->  int
+    others       :  Set        ->  Set
+    union        :  Set * Set  ->  Set
+    intersection :  Set * Set  ->  Set
+    toList       :  Set        ->  List
     
 Equations:
+
+    (choose (adjoin s k)) = k
+
+    (others (adjoin s k)) = s
+
+    (union (emptySet) s2) = s2
+    (union (adjoin s1 k) s2) = (union s1 (adjoin s2 k))
+
+    (intersection (emptySet) s2) = (emptySet)
+    (intersection (adjoin s1 k) s2)
+        = (union (intersection s1 s2)
+                 (intersection (adjoin (emptySet) k) s2))

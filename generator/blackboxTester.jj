@@ -79,7 +79,9 @@ TOKEN:
     < CARROT: "^" > |
     < UNDERSCORE: "_" > |
     < TILDA: "~" > |
-    < HEX_ESCAPE: "\\x" >
+    < HEX_ESCAPE: "\\x" > |
+    < LEFT_PAREN: "(" > |
+    < RIGHT_PAREN: ")" >
 }
 
 /* unicode groups */
@@ -196,17 +198,28 @@ TOKEN :
 }
 
 Input Input() :
-{}
+{
+    ArrayList<Signature> signatures;
+    ArrayList<Equation> equations;
+}
 {
     { openListContext(Signature.class); }
-    <SIGNATURES> (Signature())+ <EQUATIONS> <EOF>
+    <SIGNATURES> (Signature())+ 
+    {
+        signatures = popCurrentObjectList(Signature.class);
+        openListContext(Equation.class);
+    }
+    <EQUATIONS> (Equation())+ <EOF>
     {
         for (String type : seenTypes) {
             if (!declaredTypes.contains(type)) {
                 throw new ParseException("Undeclared type: \"" + type + "\"");
             }
         } 
-        return new Input(popCurrentObjectList(Signature.class), null); 
+        
+        equations = popCurrentObjectList(Equation.class);
+        
+        return new Input(signatures, equations); 
     }
 }
 
@@ -283,3 +296,49 @@ Type Type(boolean addToListContext) :
     }
 }
 
+void Equation() :
+{
+    Term leftHandSide;
+    Term rightHandSide;
+}
+{
+    leftHandSide=Term(false) <EQUALS> rightHandSide=Term(false)
+    {
+        currentObjectList.peek().add(new Equation(leftHandSide, rightHandSide)); 
+    }
+}
+
+Term Term(boolean addToList) :
+{   
+    Term term;
+}
+{
+    (term=Variable()|term=RewriteOperation())
+    {
+        if (addToList) {
+            currentObjectList.peek().add(term);
+        }
+        return term;
+    }
+}
+
+Variable Variable() :
+{}
+{
+    <ID>
+    { 
+        return new Variable(token.image);
+    }
+}
+
+Operation RewriteOperation() :
+{
+    String operation;
+}
+{
+    { openListContext(Term.class); }
+    <LEFT_PAREN> operation=Operation() (Term(true))* <RIGHT_PAREN>
+    {
+        return new Operation(operation, popCurrentObjectList(Term.class));
+    }
+}

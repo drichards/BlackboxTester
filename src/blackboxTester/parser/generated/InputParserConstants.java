@@ -67,59 +67,63 @@ public interface InputParserConstants {
   /** RegularExpression Id. */
   int HEX_ESCAPE = 32;
   /** RegularExpression Id. */
-  int ND = 33;
+  int LEFT_PAREN = 33;
   /** RegularExpression Id. */
-  int MC = 34;
+  int RIGHT_PAREN = 34;
   /** RegularExpression Id. */
-  int ME = 35;
+  int ND = 35;
   /** RegularExpression Id. */
-  int LU = 36;
+  int MC = 36;
   /** RegularExpression Id. */
-  int LL = 37;
+  int ME = 37;
   /** RegularExpression Id. */
-  int LT = 38;
+  int LU = 38;
   /** RegularExpression Id. */
-  int LM = 39;
+  int LL = 39;
   /** RegularExpression Id. */
-  int LO = 40;
+  int LT = 40;
   /** RegularExpression Id. */
-  int MN = 41;
+  int LM = 41;
   /** RegularExpression Id. */
-  int NL = 42;
+  int LO = 42;
   /** RegularExpression Id. */
-  int NO = 43;
+  int MN = 43;
   /** RegularExpression Id. */
-  int PD = 44;
+  int NL = 44;
   /** RegularExpression Id. */
-  int PC = 45;
+  int NO = 45;
   /** RegularExpression Id. */
-  int PO = 46;
+  int PD = 46;
   /** RegularExpression Id. */
-  int SC = 47;
+  int PC = 47;
   /** RegularExpression Id. */
-  int SM = 48;
+  int PO = 48;
   /** RegularExpression Id. */
-  int SK = 49;
+  int SC = 49;
   /** RegularExpression Id. */
-  int SO = 50;
+  int SM = 50;
   /** RegularExpression Id. */
-  int CO = 51;
+  int SK = 51;
   /** RegularExpression Id. */
-  int ID = 52;
+  int SO = 52;
   /** RegularExpression Id. */
-  int PECULIAR_ID = 53;
+  int CO = 53;
   /** RegularExpression Id. */
-  int INITIAL = 54;
+  int ID = 54;
   /** RegularExpression Id. */
-  int SPECIAL_INITIAL = 55;
+  int PECULIAR_ID = 55;
   /** RegularExpression Id. */
-  int CONSTITUENT = 56;
+  int INITIAL = 56;
   /** RegularExpression Id. */
-  int SUBSEQUENT = 57;
+  int SPECIAL_INITIAL = 57;
   /** RegularExpression Id. */
-  int SPECIAL_SUBSEQUENT = 58;
+  int CONSTITUENT = 58;
   /** RegularExpression Id. */
-  int INLINE_HEX_ESCAPE = 59;
+  int SUBSEQUENT = 59;
+  /** RegularExpression Id. */
+  int SPECIAL_SUBSEQUENT = 60;
+  /** RegularExpression Id. */
+  int INLINE_HEX_ESCAPE = 61;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -159,6 +163,8 @@ public interface InputParserConstants {
     "\"_\"",
     "\"~\"",
     "\"\\\\x\"",
+    "\"(\"",
+    "\")\"",
     "<ND>",
     "<MC>",
     "<ME>",

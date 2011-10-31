@@ -24,7 +24,12 @@ public class ASTGenerator {
 	/**
 	 * Depth to which we will generate all possible abstract syntax trees.
 	 */
-	private static int DEPTH = 10;
+	private static final int DEPTH = 10;
+	
+	/**
+	 * Maximum number of expressions we want to generate
+	 */
+	private static final int MAX_EXPRESSIONS = 1000;
 	
 	/**
 	 * The aggregated set of abstract syntax trees that have been generated.
@@ -60,6 +65,7 @@ public class ASTGenerator {
 	 * @see AST
 	 */
 	public static ArrayList<AST> generateASTs(ArrayList<Signature> signatures) {
+		int count = 0;
 		// for each depth
 		for (int i = 0; i < DEPTH; i++) {
 			// for each signature
@@ -116,6 +122,9 @@ public class ASTGenerator {
 							getASTList(opSpec.getType()).add(
 								new FunctionCall(opSpec.getOperation(), args)
 							);
+							if (opSpec.getType().isPrimitive()) {
+								count++;
+							}
 						}
 					} else if (opSpec.getArgTypes().size() == 0) {
 						// otherwise if the op spec didn't have any arguments
@@ -126,8 +135,15 @@ public class ASTGenerator {
 								new ArrayList<AST>()
 							)
 						);
+						if (opSpec.getType().isPrimitive()) {
+							count++;
+						}
 					}
+					
+					if (count > MAX_EXPRESSIONS) break;
 				}
+				
+				if (count >= MAX_EXPRESSIONS) break;
 			}
 			
 			// add the current layer to the total aggregation of trees
@@ -147,6 +163,8 @@ public class ASTGenerator {
 			lastLayer = currentLayer;
 			// create a new empty current layer
 			currentLayer = new HashMap<Type, ArrayList<AST>>();
+			
+			if (count > MAX_EXPRESSIONS) break;
 		}
 		
 		ArrayList<AST> returnList = new ArrayList<AST>();
