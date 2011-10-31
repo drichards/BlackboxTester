@@ -38,6 +38,14 @@ public class FunctionCall implements AST {
 	}
 	
 	/**
+	 * 
+	 * @return ArrayList<AST> of this FunctionCall's Arguments
+	 */
+	public ArrayList<AST> getArgs() {
+		return this.args;
+	}
+	
+	/**
 	 * Create a new FunctionCall object with the given method name and args.
 	 * 
 	 * @param methodName The method name of this function call.
@@ -47,4 +55,6 @@ public class FunctionCall implements AST {
 		this.methodName = methodName;
 		this.args = args;
 	}
+	
+	
 }

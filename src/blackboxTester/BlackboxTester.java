@@ -1,5 +1,6 @@
 package blackboxTester;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
 import blackboxTester.ast.AST;
 import blackboxTester.ast.generator.ASTGenerator;
@@ -25,9 +26,12 @@ public class BlackboxTester {
 		PrintWriter out = new PrintWriter(args[1], "UTF8");
 		
 		int count = 0;
-		for (AST ast : ASTGenerator.generateASTs(input.getSignatures())) {
-
+		ArrayList<AST> generatedAsts = ASTGenerator.generateASTs(input.getSignatures());
+		for (AST ast : generatedAsts) {
+			
 			out.println(ast.toString());
+			// TODO: what input to use for replace?
+			// out.println(ast.replace(ast, eq));
 			
 			count++;
 			if (count >= 1000) {
