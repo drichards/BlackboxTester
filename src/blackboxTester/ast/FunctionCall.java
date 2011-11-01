@@ -45,6 +45,10 @@ public class FunctionCall implements AST {
 		return this.args;
 	}
 	
+	public String getMethodName() {
+		return this.methodName;
+	}
+	
 	/**
 	 * Create a new FunctionCall object with the given method name and args.
 	 * 

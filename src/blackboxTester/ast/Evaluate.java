@@ -2,6 +2,8 @@ package blackboxTester.ast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+
 import blackboxTester.ast.AST;
 import blackboxTester.ast.FunctionCall;
 import blackboxTester.ast.PrimitiveAST;
@@ -18,18 +20,22 @@ import blackboxTester.parser.ast.Equation;
 public class Evaluate  {
 
 
-	public AST replace(AST ast, ArrayList<Equation> eqList) {
+	public AST replace(ArrayList<AST> asts, ArrayList<Equation> eqList) {
 		AST newAST = null;
-		for(AST arg : ((FunctionCall) ast).getArgs()) {
-			Boolean replaced = false;
-			for(Equation eq : eqList) {
-				newAST = this.rewrite(arg, eq);
-				if (newAST != null) {
-					this.replace(newAST, eqList);
-					replaced = true;
+		for(AST arg : asts) {
+			Boolean replaced;
+			do {
+				replaced = false;
+
+				for(Equation eq : eqList) {
+					newAST = this.rewrite(arg, eq);
+					if (newAST != null) {
+						// replace the current ast in asts with the new ast
+						asts.set(index, element);
+						replaced = true;
+					}
 				}
-			}
-			while (replaced);
+			} while (replaced);
 		}
 		return newAST;
 	}
@@ -45,7 +51,8 @@ public class Evaluate  {
 			if (!arg.isPrimitive()) {
 				AST newArg = rewrite(arg, equation);
 				if (newArg != null){
-					this.rewrite(newArg, equation);
+					//this.rewrite(newArg, equation);
+					((FunctionCall)(ast)).getArgs().set();
 					return ast;
 				}
 			}
@@ -56,7 +63,7 @@ public class Evaluate  {
 	//	AST match
 
 	private AST match(AST ast, Equation equations) {
-		HashMap <String, AST> env = generateENV(ast, equations.getRightHandSide(), null);
+		HashMap <String, AST> env = generateENV(ast, equations.getLeftHandSide(), new HashMap<String, AST>());
 		if (env == null) {
 			return null;
 		}
@@ -66,31 +73,36 @@ public class Evaluate  {
 
 	private HashMap<String, AST> generateENV(AST ast, Term leftHandside, HashMap<String, AST> env) {
 		if(leftHandside instanceof Variable) {
-			env.put(leftHandside, ast);
+			env.put(((Variable) leftHandside).getName(), ast);
 			return env;
 		}
-		if(leftHandside.operation != ast.operation) {
+		if(!((Operation)leftHandside).getName().equals(((FunctionCall)ast).getMethodName())) {
 			return null;
 		}
 		int i;
-		for (i = 0; i < ast.args.length(); i++) {
-			env = generateENV(ast.args[i], leftHandside.args[i], env);
+		for (i = 0; i < ((FunctionCall)ast).getArgs().size(); i++) {
+			
+			env = generateENV(
+				((FunctionCall)ast).getArgs().get(i), 
+				((Operation)leftHandside).getArgs().get(i), 
+				env
+			);
 			if (env == null) {
 				return env;
-			}
-			return env;
+			}		
 		}
+		return env;
 
 	}
 
 	private AST rewriteWithEnv(Term rightHandside, HashMap<String, AST> env) {
-		if (rightHandside instanceof String) {
-			return env.get(rightHandside);
+		if (rightHandside instanceof Variable) {
+			return env.get(((Variable)rightHandside).getName());
 		}
 		ArrayList<AST> args = new ArrayList<AST>();
-		for(AST args : rightHandside.arg) {
-			args.add(rewriteWithEnv(args, env));
+		for(Term arg : ((Operation)rightHandside).getArgs()) {
+			args.add(rewriteWithEnv(arg, env));
 		}
-		return new FunctionCall(rightHandside.operation, args);
+		return new FunctionCall(((Operation)rightHandside).getName(), args);
 	}
 }

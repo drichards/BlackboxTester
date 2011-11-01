@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import blackboxTester.ast.AST;
 import blackboxTester.ast.generator.ASTGenerator;
 import blackboxTester.parser.Parser;
+import blackboxTester.parser.ast.Equation;
 import blackboxTester.parser.ast.Input;
 
 /**
@@ -27,6 +28,10 @@ public class BlackboxTester {
 		
 		int count = 0;
 		ArrayList<AST> generatedAsts = ASTGenerator.generateASTs(input.getSignatures());
+		ArrayList<Equation> equations = input.getEquations();
+		
+		
+		
 		for (AST ast : generatedAsts) {
 			
 			out.println(ast.toString());
