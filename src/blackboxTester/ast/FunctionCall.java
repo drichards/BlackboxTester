@@ -1,12 +1,13 @@
 package blackboxTester.ast;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * An abstract syntax tree (AST) that represents a function call.
  *
  */
-public class FunctionCall implements AST {
+public class FunctionCall implements AST, Serializable {
 	/**
 	 * The method name of this function call
 	 */
@@ -18,7 +19,7 @@ public class FunctionCall implements AST {
 	
 	@Override
 	public boolean isPrimitive() {
-		return true;
+		return false;
 	}
 	
 	@Override
@@ -47,6 +48,17 @@ public class FunctionCall implements AST {
 	
 	public String getMethodName() {
 		return this.methodName;
+	}
+	
+	@Override
+	public AST deepCopy() {
+		ArrayList<AST> copiedArgs = new ArrayList<AST>();
+		
+		for (AST arg: args) {
+			copiedArgs.add(arg.deepCopy());
+		}
+		
+		return new FunctionCall(this.methodName, copiedArgs);
 	}
 	
 	/**

@@ -2,15 +2,8 @@ package blackboxTester.ast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-
 import blackboxTester.ast.AST;
 import blackboxTester.ast.FunctionCall;
-import blackboxTester.ast.PrimitiveAST;
-import blackboxTester.parser.ast.OpSpec;
-import blackboxTester.parser.ast.PrimitiveType;
-import blackboxTester.parser.ast.Signature;
-import blackboxTester.parser.ast.Type;
 import blackboxTester.parser.ast.Term;
 import blackboxTester.parser.ast.Variable;
 import blackboxTester.parser.ast.Operation;
@@ -20,9 +13,12 @@ import blackboxTester.parser.ast.Equation;
 public class Evaluate  {
 
 
-	public AST replace(ArrayList<AST> asts, ArrayList<Equation> eqList) {
+	public void replace(ArrayList<AST> asts, ArrayList<Equation> eqList) {
 		AST newAST = null;
-		for(AST arg : asts) {
+		for(int index = 0; index < asts.size(); index++) {
+			AST arg = asts.get(index);
+
+			
 			Boolean replaced;
 			do {
 				replaced = false;
@@ -31,13 +27,13 @@ public class Evaluate  {
 					newAST = this.rewrite(arg, eq);
 					if (newAST != null) {
 						// replace the current ast in asts with the new ast
-						asts.set(index, element);
+						asts.set(index, newAST);
+						arg = newAST;
 						replaced = true;
 					}
 				}
 			} while (replaced);
 		}
-		return newAST;
 	}
 
 
@@ -47,12 +43,15 @@ public class Evaluate  {
 		if (newAST != null) {
 			return newAST;
 		}
-		for(AST arg: ((FunctionCall) ast).getArgs()) {
+		if (!(ast instanceof FunctionCall)) return null;
+		ArrayList<AST> functionArgs = ((FunctionCall) ast).getArgs();
+		for(int index = 0; index < functionArgs.size(); index++) {
+			AST arg = functionArgs.get(index);
 			if (!arg.isPrimitive()) {
 				AST newArg = rewrite(arg, equation);
 				if (newArg != null){
 					//this.rewrite(newArg, equation);
-					((FunctionCall)(ast)).getArgs().set();
+					((FunctionCall)(ast)).getArgs().set(index, newArg);
 					return ast;
 				}
 			}
@@ -76,6 +75,7 @@ public class Evaluate  {
 			env.put(((Variable) leftHandside).getName(), ast);
 			return env;
 		}
+		if (!(ast instanceof FunctionCall)) return null;
 		if(!((Operation)leftHandside).getName().equals(((FunctionCall)ast).getMethodName())) {
 			return null;
 		}

@@ -3,6 +3,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 
 import blackboxTester.ast.AST;
+import blackboxTester.ast.Evaluate;
 import blackboxTester.ast.generator.ASTGenerator;
 import blackboxTester.parser.Parser;
 import blackboxTester.parser.ast.Equation;
@@ -27,23 +28,36 @@ public class BlackboxTester {
 		PrintWriter out = new PrintWriter(args[1], "UTF8");
 		
 		int count = 0;
-		ArrayList<AST> generatedAsts = ASTGenerator.generateASTs(input.getSignatures());
+		ArrayList<AST> generatedASTs = ASTGenerator.generateASTs(input.getSignatures());
+		ArrayList<AST> reducedASTs = deepCopy(generatedASTs);
 		ArrayList<Equation> equations = input.getEquations();
 		
+		Evaluate evaluator = new Evaluate();
+		evaluator.replace(reducedASTs, equations);
 		
-		
-		for (AST ast : generatedAsts) {
+		for (int i = 0; i < generatedASTs.size(); i++) {
 			
-			out.println(ast.toString());
-			// TODO: what input to use for replace?
-			// out.println(ast.replace(ast, eq));
+			if (reducedASTs.get(i).isPrimitive()) {
+				out.println(generatedASTs.get(i).toString());
+				out.println(reducedASTs.get(i).toString());
 			
-			count++;
-			if (count >= 1000) {
-				break;
+				count++;
+				if (count >= 1000) {
+					break;
+				}
 			}
 		}
 		
 		out.close();
+	}
+	
+	private static ArrayList<AST> deepCopy(ArrayList<AST> asts) {
+		ArrayList<AST> copiedAsts = new ArrayList<AST>();
+		
+		for (AST ast : asts) {
+			copiedAsts.add(ast.deepCopy());
+		}
+		
+		return copiedAsts;
 	}
 }
