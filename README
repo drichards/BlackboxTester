@@ -51,3 +51,8 @@ Source Layout:
         This takes the parsed signatures and generates a series of
         abstract syntax trees that follow the signatures.  They are
         created using the objects in blackboxTester.ast.*
+        
+    blackboxTester.ast.Evaluate
+    	This contains the function "replace" which rewrites ASTs
+    	and throws out any that aren't applicable to testing (along with other
+    	helper functions). It is called in main method of BlackboxTester.
