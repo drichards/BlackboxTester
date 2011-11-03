@@ -1,6 +1,8 @@
 package blackboxTester.ast;
 
 import java.io.Serializable;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 /**
@@ -71,6 +73,18 @@ public class FunctionCall implements AST, Serializable {
 		this.methodName = methodName;
 		this.args = args;
 	}
-	
-	
+
+	@Override
+	public String getHash() {
+		MessageDigest digest = null;
+		
+		try {
+			digest = MessageDigest.getInstance("SHA-1");
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+			System.exit(0);
+		}
+		
+		return new String(digest.digest(toString().getBytes()));
+	}
 }

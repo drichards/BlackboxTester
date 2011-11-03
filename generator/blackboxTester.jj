@@ -29,6 +29,7 @@ public class InputParser {
     protected Stack<ArrayList<Object>> currentObjectList = new Stack<ArrayList<Object>>();
     private HashSet<String> declaredTypes =  new HashSet<String>();
     private HashSet<String> seenTypes = new HashSet<String>();
+    private HashSet<String> operations = new HashSet<String>();
     
     public <T> void openListContext(Class<T> className) {
         currentObjectList.push((ArrayList<Object>)new ArrayList<T>());
@@ -255,6 +256,7 @@ void OperationSpec() :
     { openListContext(Type.class); }
     operation=Operation() <COLON> (Type(true) (<ASTERIX> Type(true))*)? "->" returnType=Type(false)
     { 
+        operations.add(operation);
         ArrayList<Type> argTypes = popCurrentObjectList(Type.class);
         currentObjectList.peek().add(new OpSpec(operation, argTypes, returnType)); 
     }
@@ -300,20 +302,21 @@ void Equation() :
 {
     Term leftHandSide;
     Term rightHandSide;
+    HashSet<String> seenVariables = new HashSet<String>();
 }
 {
-    leftHandSide=Term(false) <EQUALS> rightHandSide=Term(false)
+    leftHandSide=Term(seenVariables, false, true) <EQUALS> rightHandSide=Term(seenVariables, false, false)
     {
         currentObjectList.peek().add(new Equation(leftHandSide, rightHandSide)); 
     }
 }
 
-Term Term(boolean addToList) :
+Term Term(HashSet<String> seenVariables, boolean addToList, boolean leftHandSide) :
 {   
     Term term;
 }
 {
-    (term=Variable()|term=RewriteOperation())
+    (term=Variable(seenVariables, leftHandSide)|term=RewriteOperation(seenVariables, leftHandSide))
     {
         if (addToList) {
             currentObjectList.peek().add(term);
@@ -322,23 +325,35 @@ Term Term(boolean addToList) :
     }
 }
 
-Variable Variable() :
+Variable Variable(HashSet<String> seenVariables, boolean leftHandSide) :
 {}
 {
     <ID>
     { 
+        if (leftHandSide && seenVariables.contains(token.image)) {
+            throw new ParseException("Duplicated variable: " + token.image);
+        } else if (leftHandSide) {
+            seenVariables.add(token.image);
+        } else if (!leftHandSide && !seenVariables.contains(token.image)) {
+            throw new ParseException("Unknown variable: " + token.image);
+        }
+        
         return new Variable(token.image);
     }
 }
 
-Operation RewriteOperation() :
+Operation RewriteOperation(HashSet<String> seenVariables, boolean leftHandSide) :
 {
     String operation;
 }
 {
     { openListContext(Term.class); }
-    <LEFT_PAREN> operation=Operation() (Term(true))* <RIGHT_PAREN>
+    <LEFT_PAREN> operation=Operation() (Term(seenVariables, true, leftHandSide))* <RIGHT_PAREN>
     {
+        if(!operations.contains(operation)) {
+            throw new ParseException("Illegal operation: " + operation);
+        }
+        
         return new Operation(operation, popCurrentObjectList(Term.class));
     }
 }

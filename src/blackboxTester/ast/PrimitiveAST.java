@@ -1,6 +1,8 @@
 package blackboxTester.ast;
 
 import java.io.Serializable;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import blackboxTester.ast.generator.RandomPrimitiveGenerator;
 
@@ -19,6 +21,20 @@ public abstract class PrimitiveAST implements AST, Serializable {
 	@Override
 	public AST deepCopy() {
 		return this;
+	}
+	
+	@Override
+	public String getHash() {
+		MessageDigest digest = null;
+		
+		try {
+			digest = MessageDigest.getInstance("SHA-1");
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+			System.exit(0);
+		}
+		
+		return new String(digest.digest(toString().getBytes()));
 	}
 	
 	/**

@@ -11,6 +11,7 @@ public class InputParser implements InputParserConstants {
     protected Stack<ArrayList<Object>> currentObjectList = new Stack<ArrayList<Object>>();
     private HashSet<String> declaredTypes =  new HashSet<String>();
     private HashSet<String> seenTypes = new HashSet<String>();
+    private HashSet<String> operations = new HashSet<String>();
 
     public <T> void openListContext(Class<T> className) {
         currentObjectList.push((ArrayList<Object>)new ArrayList<T>());
@@ -107,6 +108,7 @@ public class InputParser implements InputParserConstants {
     }
     jj_consume_token(ARROW);
     returnType = Type(false);
+        operations.add(operation);
         ArrayList<Type> argTypes = popCurrentObjectList(Type.class);
         currentObjectList.peek().add(new OpSpec(operation, argTypes, returnType));
   }
@@ -157,18 +159,19 @@ public class InputParser implements InputParserConstants {
   final public void Equation() throws ParseException {
     Term leftHandSide;
     Term rightHandSide;
-    leftHandSide = Term(false);
+    HashSet<String> seenVariables = new HashSet<String>();
+    leftHandSide = Term(seenVariables, false, true);
     jj_consume_token(EQUALS);
-    rightHandSide = Term(false);
+    rightHandSide = Term(seenVariables, false, false);
         currentObjectList.peek().add(new Equation(leftHandSide, rightHandSide));
   }
 
-  final public Term Term(boolean addToList) throws ParseException {
+  final public Term Term(HashSet<String> seenVariables, boolean addToList, boolean leftHandSide) throws ParseException {
     Term term;
     if (jj_2_11(2)) {
-      term = Variable();
+      term = Variable(seenVariables, leftHandSide);
     } else if (jj_2_12(2)) {
-      term = RewriteOperation();
+      term = RewriteOperation(seenVariables, leftHandSide);
     } else {
       jj_consume_token(-1);
       throw new ParseException();
@@ -180,13 +183,21 @@ public class InputParser implements InputParserConstants {
     throw new Error("Missing return statement in function");
   }
 
-  final public Variable Variable() throws ParseException {
+  final public Variable Variable(HashSet<String> seenVariables, boolean leftHandSide) throws ParseException {
     jj_consume_token(ID);
+        if (leftHandSide && seenVariables.contains(token.image)) {
+            {if (true) throw new ParseException("Duplicated variable: " + token.image);}
+        } else if (leftHandSide) {
+            seenVariables.add(token.image);
+        } else if (!leftHandSide && !seenVariables.contains(token.image)) {
+            {if (true) throw new ParseException("Unknown variable: " + token.image);}
+        }
+
         {if (true) return new Variable(token.image);}
     throw new Error("Missing return statement in function");
   }
 
-  final public Operation RewriteOperation() throws ParseException {
+  final public Operation RewriteOperation(HashSet<String> seenVariables, boolean leftHandSide) throws ParseException {
     String operation;
       openListContext(Term.class);
     jj_consume_token(LEFT_PAREN);
@@ -198,9 +209,13 @@ public class InputParser implements InputParserConstants {
       } else {
         break label_5;
       }
-      Term(true);
+      Term(seenVariables, true, leftHandSide);
     }
     jj_consume_token(RIGHT_PAREN);
+        if(!operations.contains(operation)) {
+            {if (true) throw new ParseException("Illegal operation: " + operation);}
+        }
+
         {if (true) return new Operation(operation, popCurrentObjectList(Term.class));}
     throw new Error("Missing return statement in function");
   }
@@ -296,6 +311,121 @@ public class InputParser implements InputParserConstants {
     finally { jj_save(12, xla); }
   }
 
+  private boolean jj_3_2() {
+    if (jj_3R_7()) return true;
+    return false;
+  }
+
+  private boolean jj_3_11() {
+    if (jj_3R_10()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_12() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_11()) {
+    jj_scanpos = xsp;
+    if (jj_3_12()) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3_10() {
+    if (jj_scan_token(ID)) return true;
+    return false;
+  }
+
+  private boolean jj_3_12() {
+    if (jj_3R_11()) return true;
+    return false;
+  }
+
+  private boolean jj_3_1() {
+    if (jj_3R_6()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_14() {
+    if (jj_scan_token(ID)) return true;
+    return false;
+  }
+
+  private boolean jj_3_9() {
+    if (jj_scan_token(STRING)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_7() {
+    if (jj_3R_12()) return true;
+    if (jj_scan_token(EQUALS)) return true;
+    return false;
+  }
+
+  private boolean jj_3_3() {
+    if (jj_3R_8()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_11() {
+    if (jj_scan_token(LEFT_PAREN)) return true;
+    if (jj_3R_14()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_8() {
+    if (jj_3R_14()) return true;
+    if (jj_scan_token(COLON)) return true;
+    return false;
+  }
+
+  private boolean jj_3_4() {
+    if (jj_scan_token(ASTERIX)) return true;
+    if (jj_3R_9()) return true;
+    return false;
+  }
+
+  private boolean jj_3_8() {
+    if (jj_scan_token(CHARACTER)) return true;
+    return false;
+  }
+
+  private boolean jj_3_13() {
+    if (jj_3R_12()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_13() {
+    if (jj_scan_token(ID)) return true;
+    return false;
+  }
+
+  private boolean jj_3_7() {
+    if (jj_scan_token(BOOLEAN)) return true;
+    return false;
+  }
+
+  private boolean jj_3_5() {
+    if (jj_3R_9()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3_4()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_10() {
+    if (jj_scan_token(ID)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_6() {
+    if (jj_scan_token(ADT)) return true;
+    if (jj_3R_13()) return true;
+    return false;
+  }
+
   private boolean jj_3_6() {
     if (jj_scan_token(INTEGER)) return true;
     return false;
@@ -317,121 +447,6 @@ public class InputParser implements InputParserConstants {
     }
     }
     }
-    return false;
-  }
-
-  private boolean jj_3_2() {
-    if (jj_3R_7()) return true;
-    return false;
-  }
-
-  private boolean jj_3_10() {
-    if (jj_scan_token(ID)) return true;
-    return false;
-  }
-
-  private boolean jj_3_11() {
-    if (jj_3R_10()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_12() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_11()) {
-    jj_scanpos = xsp;
-    if (jj_3_12()) return true;
-    }
-    return false;
-  }
-
-  private boolean jj_3_1() {
-    if (jj_3R_6()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_14() {
-    if (jj_scan_token(ID)) return true;
-    return false;
-  }
-
-  private boolean jj_3_9() {
-    if (jj_scan_token(STRING)) return true;
-    return false;
-  }
-
-  private boolean jj_3_3() {
-    if (jj_3R_8()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_7() {
-    if (jj_3R_12()) return true;
-    if (jj_scan_token(EQUALS)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_8() {
-    if (jj_3R_14()) return true;
-    if (jj_scan_token(COLON)) return true;
-    return false;
-  }
-
-  private boolean jj_3_4() {
-    if (jj_scan_token(ASTERIX)) return true;
-    if (jj_3R_9()) return true;
-    return false;
-  }
-
-  private boolean jj_3_8() {
-    if (jj_scan_token(CHARACTER)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_11() {
-    if (jj_scan_token(LEFT_PAREN)) return true;
-    if (jj_3R_14()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_13() {
-    if (jj_scan_token(ID)) return true;
-    return false;
-  }
-
-  private boolean jj_3_5() {
-    if (jj_3R_9()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3_4()) { jj_scanpos = xsp; break; }
-    }
-    return false;
-  }
-
-  private boolean jj_3_7() {
-    if (jj_scan_token(BOOLEAN)) return true;
-    return false;
-  }
-
-  private boolean jj_3_12() {
-    if (jj_3R_11()) return true;
-    return false;
-  }
-
-  private boolean jj_3_13() {
-    if (jj_3R_12()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_10() {
-    if (jj_scan_token(ID)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_6() {
-    if (jj_scan_token(ADT)) return true;
-    if (jj_3R_13()) return true;
     return false;
   }
 

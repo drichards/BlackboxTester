@@ -1,5 +1,4 @@
-Signatures:
-
+Signatures: 
 ADT: List
 
     emptyList   :              ->  List
@@ -19,7 +18,7 @@ ADT: Set
     union        :  Set * Set  ->  Set
     intersection :  Set * Set  ->  Set
     toList       :  Set        ->  List
-    
+
 Equations:
 
     (choose (adjoin s k)) = k

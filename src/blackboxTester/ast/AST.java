@@ -17,4 +17,9 @@ public interface AST{
 	 * @return A deep copy of this AST.
 	 */
 	public AST deepCopy();
+	
+	/**
+	 * @return An MD5 hash of this ast
+	 */
+	public String getHash();
 }

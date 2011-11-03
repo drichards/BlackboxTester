@@ -2,6 +2,8 @@ package blackboxTester.ast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+
 import blackboxTester.ast.AST;
 import blackboxTester.ast.FunctionCall;
 import blackboxTester.parser.ast.Term;
@@ -17,7 +19,8 @@ public class Evaluate  {
 		AST newAST = null;
 		for(int index = 0; index < asts.size(); index++) {
 			AST arg = asts.get(index);
-
+			HashSet<String> seenASTs = new HashSet<String>();
+			seenASTs.add(arg.getHash());
 			
 			Boolean replaced;
 			do {
@@ -30,6 +33,15 @@ public class Evaluate  {
 						asts.set(index, newAST);
 						arg = newAST;
 						replaced = true;
+						
+						String hash = newAST.getHash();
+						
+						if (seenASTs.contains(hash)) {
+							replaced = false;
+							break;
+						} else {
+							seenASTs.add(hash);
+						}
 					}
 				}
 			} while (replaced);
