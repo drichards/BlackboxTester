@@ -48,8 +48,9 @@ public class Evaluate  {
 
 	/**
 	 * Rewrite will attempt to match the given AST with the given equation.
-	 * If both match, a reduced AST will be returned, otherwise, the same
-	 * AST will be returned
+	 * If both match, a reduced AST will be returned. If it doesn't match at first,
+	 * it will attempt to go through each FunctionCall in the AST and attempt
+	 * to match the given equation
 	 * 
 	 * @param ast the AST to be rewritten
 	 * @param equation Equation used to rewrite the AST
