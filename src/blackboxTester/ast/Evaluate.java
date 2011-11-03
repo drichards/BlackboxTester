@@ -92,20 +92,42 @@ public class Evaluate  {
 	}
 
 	/**
+	 * Match takes a single AST and an equation and attempts to generate
+	 * a new AST using the equation.  It will return null if it is unable
+	 * to do this.
 	 * 
-	 * @param ast
-	 * @param equations
-	 * @return
+	 * This function does not recursively try to match sub-asts.
+	 * 
+	 * @param ast The AST to match against.
+	 * @param equations The equation to do the matching.
+	 * @return The rewritten AST or null if it didn't match.
 	 */
 	private AST match(AST ast, Equation equations) {
-		HashMap <String, AST> env = generateENV(ast, equations.getLeftHandSide(), new HashMap<String, AST>());
+		HashMap <String, AST> env = generateENV(
+			ast, equations.getLeftHandSide(), new HashMap<String, AST>()
+		);
+		
 		if (env == null) {
 			return null;
 		}
 		return rewriteWithEnv(equations.getRightHandSide(), env);
 	}
 
-	private HashMap<String, AST> generateENV(AST ast, Term leftHandside, HashMap<String, AST> env) {
+	/**
+	 * Given an AST and the left hand side term of an equation, generate
+	 * an environment that maps variables in the equation to ASTs.
+	 * 
+	 * @param ast The AST to generate the environment from.
+	 * @param leftHandside The left hand side of a re-write equation.
+	 * @param env The current environment.
+	 * @return The update environment or null if the left hand side doesn't
+	 * match the ast.
+	 */
+	private HashMap<String, AST> generateENV(
+		AST ast, 
+		Term leftHandside, 
+		HashMap<String, AST> env
+	) {
 		if(leftHandside instanceof Variable) {
 			env.put(((Variable) leftHandside).getName(), ast);
 			return env;
@@ -127,6 +149,14 @@ public class Evaluate  {
 		return env;
 	}
 
+	/**
+	 * Given an environment that maps variables to ASTs, and the right
+	 * hand side of a re-write equation, create a new AST.
+	 * 
+	 * @param rightHandside The right hand side of a re-write equation.
+	 * @param env An environment mapping variables to ASTs.
+	 * @return A new AST rewritten from the right hand side and the environment.
+	 */
 	private AST rewriteWithEnv(Term rightHandside, HashMap<String, AST> env) {
 		if (rightHandside instanceof Variable) {
 			return env.get(((Variable)rightHandside).getName());
