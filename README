@@ -20,6 +20,16 @@ To run:
     textual output of your program in the format specified
     below.
 
+Notes:
+	-For the StackInt example, tests can be generated as follows:
+	
+	(top (push (pop (empty)) -1))
+	*rewrites to:*
+	-1
+	
+	Even though (pop (empty)) would throw an error in a standard stack
+	implementation.
+
 
 Software used:
     JavaCC was used to generate the parser generator for
