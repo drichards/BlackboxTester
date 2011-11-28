@@ -16,7 +16,6 @@ ADT: Factorial
     factorial : Nat -> Nat
 
 Equations:
-
     (pred (succ m))  =  m
 
     (asInt (minus m n)) = (- (asInt m) (asInt n))

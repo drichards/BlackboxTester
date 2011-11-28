@@ -67,22 +67,10 @@ TOKEN:
     < EQUATIONS: "Equations:"> |
     < PLUS: "+" > |
     < MINUS: "-" > |
-    < DOTDOTDOT: "..."> |
     < ARROW: "->"> |
-    < DOT: "." > |
-    < AT: "@" > |
-    < EXCLAMATION: "!" > |
-    < DOLLAR: "$" > |
-    < PERCENT: "%" > |
-    < AMP: "&" > |
-    < SLASH: "/" > |
     < LESS_THAN: "<" > |
     < EQUALS: "=" > |
     < GREATER_THAN: ">" > |
-    < QUESTION_MARK: "?" > |
-    < CARROT: "^" > |
-    < UNDERSCORE: "_" > |
-    < TILDA: "~" > |
     < HEX_ESCAPE: "\\x" > |
     < LEFT_PAREN: "(" > |
     < RIGHT_PAREN: ")" > |
@@ -193,12 +181,12 @@ TOKEN:
 TOKEN :
 {
     < ID: ((<INITIAL> | <PECULIAR_ID>) (<SUBSEQUENT>)*)  > |
-    < PECULIAR_ID: (<PLUS>|<MINUS>|<DOTDOTDOT>|<ARROW>) > |
+    < PECULIAR_ID: (<PLUS>|<MINUS>|"..."|<ARROW>) > |
     < INITIAL: (<CONSTITUENT>|<INLINE_HEX_ESCAPE>|<SPECIAL_INITIAL>) > |
-    < SPECIAL_INITIAL: (<EXCLAMATION>|<DOLLAR>|<PERCENT>|<AMP>|<ASTERIX>|<SLASH>|<COLON>|<GREATER_THAN>|<EQUALS>|<LESS_THAN>|<QUESTION_MARK>|<CARROT>|<UNDERSCORE>|<TILDA>) > |
+    < SPECIAL_INITIAL: ("!"|"$"|"%"|"&"|<ASTERIX>|"/"|<COLON>|<GREATER_THAN>|<EQUALS>|<LESS_THAN>|"?"|"^"|"_"|"~") > |
     < CONSTITUENT: (["a"-"z","A"-"Z"])|<LU>|<LL>|<LT>|<LM>|<LO>|<MN>|<NL>|<NO>|<PD>|<PC>|<PO>|<SC>|<SM>|<SK>|<SO>|<CO>> |
     < SUBSEQUENT: (<INITIAL>|["0"-"9"]|<SPECIAL_SUBSEQUENT>|<ND>|<MC>|<ME>) > |
-    < SPECIAL_SUBSEQUENT: (<PLUS>|<MINUS>|<DOT>|<AT>) > |
+    < SPECIAL_SUBSEQUENT: (<PLUS>|<MINUS>|"."|"@") > |
     < INLINE_HEX_ESCAPE: <HEX_ESCAPE> (["0"-"9","a"-"f","A"-"F"])+ >
 }
 

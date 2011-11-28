@@ -156,6 +156,11 @@ public class Evaluate  {
 		if(!((Operation)leftHandside).getName().equals(((FunctionCall)ast).getMethodName())) {
 			return null;
 		}
+		
+		if (((FunctionCall)ast).getArgs().size() != ((Operation)leftHandside).getArgs().size()) {
+			return null;
+		}
+		
 		int i;
 		for (i = 0; i < ((FunctionCall)ast).getArgs().size(); i++) {
 			env = generateENV(
