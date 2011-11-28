@@ -1,6 +1,5 @@
 package blackboxTester.ast;
 
-import java.io.Serializable;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -9,7 +8,7 @@ import java.util.ArrayList;
  * An abstract syntax tree (AST) that represents a function call.
  *
  */
-public class FunctionCall implements AST, Serializable {
+public class FunctionCall implements IFunctionCall {
 	/**
 	 * The method name of this function call
 	 */
@@ -21,6 +20,11 @@ public class FunctionCall implements AST, Serializable {
 	
 	@Override
 	public boolean isPrimitive() {
+		return false;
+	}
+	
+	@Override
+	public boolean isFullyReduced() {
 		return false;
 	}
 	
@@ -40,10 +44,7 @@ public class FunctionCall implements AST, Serializable {
 		return builder.toString();
 	}
 	
-	/**
-	 * 
-	 * @return ArrayList<AST> of this FunctionCall's Arguments
-	 */
+	@Override
 	public ArrayList<AST> getArgs() {
 		return this.args;
 	}

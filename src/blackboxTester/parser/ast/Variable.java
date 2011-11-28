@@ -1,6 +1,6 @@
 package blackboxTester.parser.ast;
 
-public class Variable implements Term {
+public class Variable implements Term, RHS {
 	private String name;
 	
 	public Variable(String name) {

@@ -11,119 +11,127 @@ public interface InputParserConstants {
   /** End of File. */
   int EOF = 0;
   /** RegularExpression Id. */
-  int INTEGER = 5;
+  int TRUE = 5;
   /** RegularExpression Id. */
-  int STRING = 6;
+  int FALSE = 6;
   /** RegularExpression Id. */
-  int CHARACTER = 7;
+  int NOT = 7;
   /** RegularExpression Id. */
-  int BOOLEAN = 8;
+  int INTEGER = 8;
   /** RegularExpression Id. */
-  int ASTERIX = 9;
+  int STRING = 9;
   /** RegularExpression Id. */
-  int COLON = 10;
+  int CHARACTER = 10;
   /** RegularExpression Id. */
-  int ADT = 11;
+  int BOOLEAN = 11;
   /** RegularExpression Id. */
-  int SIGNATURES = 12;
+  int ASTERIX = 12;
   /** RegularExpression Id. */
-  int EQUATIONS = 13;
+  int COLON = 13;
   /** RegularExpression Id. */
-  int PLUS = 14;
+  int ADT = 14;
   /** RegularExpression Id. */
-  int MINUS = 15;
+  int SIGNATURES = 15;
   /** RegularExpression Id. */
-  int DOTDOTDOT = 16;
+  int EQUATIONS = 16;
   /** RegularExpression Id. */
-  int ARROW = 17;
+  int PLUS = 17;
   /** RegularExpression Id. */
-  int DOT = 18;
+  int MINUS = 18;
   /** RegularExpression Id. */
-  int AT = 19;
+  int DOTDOTDOT = 19;
   /** RegularExpression Id. */
-  int EXCLAMATION = 20;
+  int ARROW = 20;
   /** RegularExpression Id. */
-  int DOLLAR = 21;
+  int DOT = 21;
   /** RegularExpression Id. */
-  int PERCENT = 22;
+  int AT = 22;
   /** RegularExpression Id. */
-  int AMP = 23;
+  int EXCLAMATION = 23;
   /** RegularExpression Id. */
-  int SLASH = 24;
+  int DOLLAR = 24;
   /** RegularExpression Id. */
-  int LESS_THAN = 25;
+  int PERCENT = 25;
   /** RegularExpression Id. */
-  int EQUALS = 26;
+  int AMP = 26;
   /** RegularExpression Id. */
-  int GREATER_THAN = 27;
+  int SLASH = 27;
   /** RegularExpression Id. */
-  int QUESTION_MARK = 28;
+  int LESS_THAN = 28;
   /** RegularExpression Id. */
-  int CARROT = 29;
+  int EQUALS = 29;
   /** RegularExpression Id. */
-  int UNDERSCORE = 30;
+  int GREATER_THAN = 30;
   /** RegularExpression Id. */
-  int TILDA = 31;
+  int QUESTION_MARK = 31;
   /** RegularExpression Id. */
-  int HEX_ESCAPE = 32;
+  int CARROT = 32;
   /** RegularExpression Id. */
-  int LEFT_PAREN = 33;
+  int UNDERSCORE = 33;
   /** RegularExpression Id. */
-  int RIGHT_PAREN = 34;
+  int TILDA = 34;
   /** RegularExpression Id. */
-  int ND = 35;
+  int HEX_ESCAPE = 35;
   /** RegularExpression Id. */
-  int MC = 36;
+  int LEFT_PAREN = 36;
   /** RegularExpression Id. */
-  int ME = 37;
+  int RIGHT_PAREN = 37;
   /** RegularExpression Id. */
-  int LU = 38;
+  int UINT10 = 38;
   /** RegularExpression Id. */
-  int LL = 39;
+  int ND = 39;
   /** RegularExpression Id. */
-  int LT = 40;
+  int MC = 40;
   /** RegularExpression Id. */
-  int LM = 41;
+  int ME = 41;
   /** RegularExpression Id. */
-  int LO = 42;
+  int LU = 42;
   /** RegularExpression Id. */
-  int MN = 43;
+  int LL = 43;
   /** RegularExpression Id. */
-  int NL = 44;
+  int LT = 44;
   /** RegularExpression Id. */
-  int NO = 45;
+  int LM = 45;
   /** RegularExpression Id. */
-  int PD = 46;
+  int LO = 46;
   /** RegularExpression Id. */
-  int PC = 47;
+  int MN = 47;
   /** RegularExpression Id. */
-  int PO = 48;
+  int NL = 48;
   /** RegularExpression Id. */
-  int SC = 49;
+  int NO = 49;
   /** RegularExpression Id. */
-  int SM = 50;
+  int PD = 50;
   /** RegularExpression Id. */
-  int SK = 51;
+  int PC = 51;
   /** RegularExpression Id. */
-  int SO = 52;
+  int PO = 52;
   /** RegularExpression Id. */
-  int CO = 53;
+  int SC = 53;
   /** RegularExpression Id. */
-  int ID = 54;
+  int SM = 54;
   /** RegularExpression Id. */
-  int PECULIAR_ID = 55;
+  int SK = 55;
   /** RegularExpression Id. */
-  int INITIAL = 56;
+  int SO = 56;
   /** RegularExpression Id. */
-  int SPECIAL_INITIAL = 57;
+  int CO = 57;
   /** RegularExpression Id. */
-  int CONSTITUENT = 58;
+  int ID = 58;
   /** RegularExpression Id. */
-  int SUBSEQUENT = 59;
+  int PECULIAR_ID = 59;
   /** RegularExpression Id. */
-  int SPECIAL_SUBSEQUENT = 60;
+  int INITIAL = 60;
   /** RegularExpression Id. */
-  int INLINE_HEX_ESCAPE = 61;
+  int SPECIAL_INITIAL = 61;
+  /** RegularExpression Id. */
+  int CONSTITUENT = 62;
+  /** RegularExpression Id. */
+  int SUBSEQUENT = 63;
+  /** RegularExpression Id. */
+  int SPECIAL_SUBSEQUENT = 64;
+  /** RegularExpression Id. */
+  int INLINE_HEX_ESCAPE = 65;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -135,6 +143,9 @@ public interface InputParserConstants {
     "\"\\t\"",
     "\"\\n\"",
     "\"\\r\"",
+    "\"#t\"",
+    "\"#f\"",
+    "\"not\"",
     "\"int\"",
     "\"string\"",
     "\"character\"",
@@ -165,6 +176,7 @@ public interface InputParserConstants {
     "\"\\\\x\"",
     "\"(\"",
     "\")\"",
+    "<UINT10>",
     "<ND>",
     "<MC>",
     "<ME>",

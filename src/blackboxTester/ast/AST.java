@@ -22,4 +22,9 @@ public interface AST{
 	 * @return An MD5 hash of this ast
 	 */
 	public String getHash();
+	
+	/**
+	 * @return True if this AST is in it's fully reduced primitive form.
+	 */
+	public boolean isFullyReduced();
 }

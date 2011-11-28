@@ -29,7 +29,7 @@ public class ASTGenerator {
 	/**
 	 * Maximum number of expressions we want to generate
 	 */
-	private static final int MAX_EXPRESSIONS = 1000;
+	private static final int MAX_EXPRESSIONS = 10000;
 	
 	/**
 	 * The aggregated set of abstract syntax trees that have been generated.
@@ -124,6 +124,10 @@ public class ASTGenerator {
 							);
 							if (opSpec.getType().isPrimitive()) {
 								count++;
+								
+								if (count >= MAX_EXPRESSIONS) {
+									break;
+								}
 							}
 						}
 					} else if (opSpec.getArgTypes().size() == 0) {
@@ -140,7 +144,7 @@ public class ASTGenerator {
 						}
 					}
 					
-					if (count > MAX_EXPRESSIONS) break;
+					if (count >= MAX_EXPRESSIONS) break;
 				}
 				
 				if (count >= MAX_EXPRESSIONS) break;
@@ -164,11 +168,11 @@ public class ASTGenerator {
 			// create a new empty current layer
 			currentLayer = new HashMap<Type, ArrayList<AST>>();
 			
-			if (count > MAX_EXPRESSIONS) break;
+			if (count >= MAX_EXPRESSIONS) break;
 		}
 		
 		ArrayList<AST> returnList = new ArrayList<AST>();
-		
+	
 		// for each type of AST
 		for (Type type : trees.keySet()) {
 			// if the return type is a primitive

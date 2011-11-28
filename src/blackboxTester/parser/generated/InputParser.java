@@ -158,20 +158,20 @@ public class InputParser implements InputParserConstants {
 
   final public void Equation() throws ParseException {
     Term leftHandSide;
-    Term rightHandSide;
+    RHS rightHandSide;
     HashSet<String> seenVariables = new HashSet<String>();
-    leftHandSide = Term(seenVariables, false, true);
+    leftHandSide = Term(seenVariables, false);
     jj_consume_token(EQUALS);
-    rightHandSide = Term(seenVariables, false, false);
+    rightHandSide = RHS(seenVariables, false);
         currentObjectList.peek().add(new Equation(leftHandSide, rightHandSide));
   }
 
-  final public Term Term(HashSet<String> seenVariables, boolean addToList, boolean leftHandSide) throws ParseException {
+  final public Term Term(HashSet<String> seenVariables, boolean addToList) throws ParseException {
     Term term;
     if (jj_2_11(2)) {
-      term = Variable(seenVariables, leftHandSide);
+      term = Variable(seenVariables, true);
     } else if (jj_2_12(2)) {
-      term = RewriteOperation(seenVariables, leftHandSide);
+      term = RewriteOperation(seenVariables);
     } else {
       jj_consume_token(-1);
       throw new ParseException();
@@ -180,6 +180,116 @@ public class InputParser implements InputParserConstants {
             currentObjectList.peek().add(term);
         }
         {if (true) return term;}
+    throw new Error("Missing return statement in function");
+  }
+
+  final public RHS RHS(HashSet<String> seenVariables, boolean addToList) throws ParseException {
+    RHS rhs;
+    if (jj_2_13(2)) {
+      rhs = RHSPrimitive();
+    } else if (jj_2_14(2)) {
+      rhs = Variable(seenVariables, false);
+    } else if (jj_2_15(2)) {
+      rhs = RHSPrimitiveOperation(seenVariables);
+    } else if (jj_2_16(2)) {
+      rhs = RHSOperation(seenVariables);
+    } else {
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+        if (addToList) {
+            currentObjectList.peek().add(rhs);
+        }
+        {if (true) return rhs;}
+    throw new Error("Missing return statement in function");
+  }
+
+  final public RHS RHSPrimitive() throws ParseException {
+    RHS rhs;
+    if (jj_2_17(2)) {
+      jj_consume_token(TRUE);
+    } else if (jj_2_18(2)) {
+      jj_consume_token(FALSE);
+    } else if (jj_2_19(2)) {
+      jj_consume_token(UINT10);
+    } else {
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+        if (token.kind == InputParserConstants.TRUE) {
+            rhs = new RHSTrue();
+        } else if (token.kind == InputParserConstants.FALSE) {
+            rhs = new RHSFalse();
+        } else {
+            rhs = new RHSInteger(Integer.valueOf(token.image));
+        }
+
+        {if (true) return rhs;}
+    throw new Error("Missing return statement in function");
+  }
+
+  final public RHSPrimitiveOperation RHSPrimitiveOperation(HashSet<String> seenVariables) throws ParseException {
+    String operation;
+      openListContext(RHS.class);
+    jj_consume_token(LEFT_PAREN);
+    operation = RHSPrimitiveOperationName();
+    label_5:
+    while (true) {
+      if (jj_2_20(2)) {
+        ;
+      } else {
+        break label_5;
+      }
+      RHS(seenVariables, true);
+    }
+    jj_consume_token(RIGHT_PAREN);
+        {if (true) return new RHSPrimitiveOperation(operation, popCurrentObjectList(RHS.class));}
+    throw new Error("Missing return statement in function");
+  }
+
+  final public String RHSPrimitiveOperationName() throws ParseException {
+    if (jj_2_21(2)) {
+      jj_consume_token(NOT);
+    } else if (jj_2_22(2)) {
+      jj_consume_token(PLUS);
+    } else if (jj_2_23(2)) {
+      jj_consume_token(MINUS);
+    } else if (jj_2_24(2)) {
+      jj_consume_token(ASTERIX);
+    } else if (jj_2_25(2)) {
+      jj_consume_token(EQUALS);
+    } else if (jj_2_26(2)) {
+      jj_consume_token(LESS_THAN);
+    } else if (jj_2_27(2)) {
+      jj_consume_token(GREATER_THAN);
+    } else {
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+        {if (true) return token.image;}
+    throw new Error("Missing return statement in function");
+  }
+
+  final public RHSOperation RHSOperation(HashSet<String> seenVariables) throws ParseException {
+    String operation;
+      openListContext(RHS.class);
+    jj_consume_token(LEFT_PAREN);
+    operation = Operation();
+    label_6:
+    while (true) {
+      if (jj_2_28(2)) {
+        ;
+      } else {
+        break label_6;
+      }
+      RHS(seenVariables, true);
+    }
+    jj_consume_token(RIGHT_PAREN);
+        if(!operations.contains(operation)) {
+            {if (true) throw new ParseException("Illegal operation: " + operation);}
+        }
+
+        {if (true) return new RHSOperation(operation, popCurrentObjectList(RHS.class));}
     throw new Error("Missing return statement in function");
   }
 
@@ -197,19 +307,19 @@ public class InputParser implements InputParserConstants {
     throw new Error("Missing return statement in function");
   }
 
-  final public Operation RewriteOperation(HashSet<String> seenVariables, boolean leftHandSide) throws ParseException {
+  final public Operation RewriteOperation(HashSet<String> seenVariables) throws ParseException {
     String operation;
       openListContext(Term.class);
     jj_consume_token(LEFT_PAREN);
     operation = Operation();
-    label_5:
+    label_7:
     while (true) {
-      if (jj_2_13(2)) {
+      if (jj_2_29(2)) {
         ;
       } else {
-        break label_5;
+        break label_7;
       }
-      Term(seenVariables, true, leftHandSide);
+      Term(seenVariables, true);
     }
     jj_consume_token(RIGHT_PAREN);
         if(!operations.contains(operation)) {
@@ -311,17 +421,257 @@ public class InputParser implements InputParserConstants {
     finally { jj_save(12, xla); }
   }
 
-  private boolean jj_3_2() {
-    if (jj_3R_7()) return true;
+  private boolean jj_2_14(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_14(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(13, xla); }
+  }
+
+  private boolean jj_2_15(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_15(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(14, xla); }
+  }
+
+  private boolean jj_2_16(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_16(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(15, xla); }
+  }
+
+  private boolean jj_2_17(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_17(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(16, xla); }
+  }
+
+  private boolean jj_2_18(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_18(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(17, xla); }
+  }
+
+  private boolean jj_2_19(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_19(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(18, xla); }
+  }
+
+  private boolean jj_2_20(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_20(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(19, xla); }
+  }
+
+  private boolean jj_2_21(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_21(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(20, xla); }
+  }
+
+  private boolean jj_2_22(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_22(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(21, xla); }
+  }
+
+  private boolean jj_2_23(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_23(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(22, xla); }
+  }
+
+  private boolean jj_2_24(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_24(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(23, xla); }
+  }
+
+  private boolean jj_2_25(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_25(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(24, xla); }
+  }
+
+  private boolean jj_2_26(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_26(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(25, xla); }
+  }
+
+  private boolean jj_2_27(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_27(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(26, xla); }
+  }
+
+  private boolean jj_2_28(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_28(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(27, xla); }
+  }
+
+  private boolean jj_2_29(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_29(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(28, xla); }
+  }
+
+  private boolean jj_3R_15() {
+    if (jj_scan_token(LEFT_PAREN)) return true;
+    if (jj_3R_21()) return true;
     return false;
   }
 
-  private boolean jj_3_11() {
+  private boolean jj_3R_20() {
+    if (jj_scan_token(ID)) return true;
+    return false;
+  }
+
+  private boolean jj_3_19() {
+    if (jj_scan_token(UINT10)) return true;
+    return false;
+  }
+
+  private boolean jj_3_29() {
+    if (jj_3R_18()) return true;
+    return false;
+  }
+
+  private boolean jj_3_3() {
     if (jj_3R_10()) return true;
     return false;
   }
 
-  private boolean jj_3R_12() {
+  private boolean jj_3_12() {
+    if (jj_3R_13()) return true;
+    return false;
+  }
+
+  private boolean jj_3_18() {
+    if (jj_scan_token(FALSE)) return true;
+    return false;
+  }
+
+  private boolean jj_3_14() {
+    if (jj_3R_12()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_10() {
+    if (jj_3R_20()) return true;
+    if (jj_scan_token(COLON)) return true;
+    return false;
+  }
+
+  private boolean jj_3_17() {
+    if (jj_scan_token(TRUE)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_14() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_17()) {
+    jj_scanpos = xsp;
+    if (jj_3_18()) {
+    jj_scanpos = xsp;
+    if (jj_3_19()) return true;
+    }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_19() {
+    if (jj_scan_token(ID)) return true;
+    return false;
+  }
+
+  private boolean jj_3_13() {
+    if (jj_3R_14()) return true;
+    return false;
+  }
+
+  private boolean jj_3_16() {
+    if (jj_3R_16()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_17() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_13()) {
+    jj_scanpos = xsp;
+    if (jj_3_14()) {
+    jj_scanpos = xsp;
+    if (jj_3_15()) {
+    jj_scanpos = xsp;
+    if (jj_3_16()) return true;
+    }
+    }
+    }
+    return false;
+  }
+
+  private boolean jj_3_27() {
+    if (jj_scan_token(GREATER_THAN)) return true;
+    return false;
+  }
+
+  private boolean jj_3_28() {
+    if (jj_3R_17()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_8() {
+    if (jj_scan_token(ADT)) return true;
+    if (jj_3R_19()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_13() {
+    if (jj_scan_token(LEFT_PAREN)) return true;
+    if (jj_3R_20()) return true;
+    return false;
+  }
+
+  private boolean jj_3_20() {
+    if (jj_3R_17()) return true;
+    return false;
+  }
+
+  private boolean jj_3_2() {
+    if (jj_3R_9()) return true;
+    return false;
+  }
+
+  private boolean jj_3_26() {
+    if (jj_scan_token(LESS_THAN)) return true;
+    return false;
+  }
+
+  private boolean jj_3_11() {
+    if (jj_3R_12()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_18() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3_11()) {
@@ -336,18 +686,13 @@ public class InputParser implements InputParserConstants {
     return false;
   }
 
-  private boolean jj_3_12() {
-    if (jj_3R_11()) return true;
-    return false;
-  }
-
   private boolean jj_3_1() {
-    if (jj_3R_6()) return true;
+    if (jj_3R_8()) return true;
     return false;
   }
 
-  private boolean jj_3R_14() {
-    if (jj_scan_token(ID)) return true;
+  private boolean jj_3_25() {
+    if (jj_scan_token(EQUALS)) return true;
     return false;
   }
 
@@ -356,32 +701,25 @@ public class InputParser implements InputParserConstants {
     return false;
   }
 
-  private boolean jj_3R_7() {
-    if (jj_3R_12()) return true;
+  private boolean jj_3R_9() {
+    if (jj_3R_18()) return true;
     if (jj_scan_token(EQUALS)) return true;
     return false;
   }
 
-  private boolean jj_3_3() {
-    if (jj_3R_8()) return true;
+  private boolean jj_3R_12() {
+    if (jj_scan_token(ID)) return true;
     return false;
   }
 
-  private boolean jj_3R_11() {
-    if (jj_scan_token(LEFT_PAREN)) return true;
-    if (jj_3R_14()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_8() {
-    if (jj_3R_14()) return true;
-    if (jj_scan_token(COLON)) return true;
+  private boolean jj_3_24() {
+    if (jj_scan_token(ASTERIX)) return true;
     return false;
   }
 
   private boolean jj_3_4() {
     if (jj_scan_token(ASTERIX)) return true;
-    if (jj_3R_9()) return true;
+    if (jj_3R_11()) return true;
     return false;
   }
 
@@ -390,23 +728,24 @@ public class InputParser implements InputParserConstants {
     return false;
   }
 
-  private boolean jj_3_13() {
-    if (jj_3R_12()) return true;
+  private boolean jj_3_23() {
+    if (jj_scan_token(MINUS)) return true;
     return false;
   }
 
-  private boolean jj_3R_13() {
-    if (jj_scan_token(ID)) return true;
+  private boolean jj_3_15() {
+    if (jj_3R_15()) return true;
     return false;
   }
 
-  private boolean jj_3_7() {
-    if (jj_scan_token(BOOLEAN)) return true;
+  private boolean jj_3R_16() {
+    if (jj_scan_token(LEFT_PAREN)) return true;
+    if (jj_3R_20()) return true;
     return false;
   }
 
   private boolean jj_3_5() {
-    if (jj_3R_9()) return true;
+    if (jj_3R_11()) return true;
     Token xsp;
     while (true) {
       xsp = jj_scanpos;
@@ -415,14 +754,43 @@ public class InputParser implements InputParserConstants {
     return false;
   }
 
-  private boolean jj_3R_10() {
-    if (jj_scan_token(ID)) return true;
+  private boolean jj_3_7() {
+    if (jj_scan_token(BOOLEAN)) return true;
     return false;
   }
 
-  private boolean jj_3R_6() {
-    if (jj_scan_token(ADT)) return true;
-    if (jj_3R_13()) return true;
+  private boolean jj_3_22() {
+    if (jj_scan_token(PLUS)) return true;
+    return false;
+  }
+
+  private boolean jj_3_21() {
+    if (jj_scan_token(NOT)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_21() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_21()) {
+    jj_scanpos = xsp;
+    if (jj_3_22()) {
+    jj_scanpos = xsp;
+    if (jj_3_23()) {
+    jj_scanpos = xsp;
+    if (jj_3_24()) {
+    jj_scanpos = xsp;
+    if (jj_3_25()) {
+    jj_scanpos = xsp;
+    if (jj_3_26()) {
+    jj_scanpos = xsp;
+    if (jj_3_27()) return true;
+    }
+    }
+    }
+    }
+    }
+    }
     return false;
   }
 
@@ -431,7 +799,7 @@ public class InputParser implements InputParserConstants {
     return false;
   }
 
-  private boolean jj_3R_9() {
+  private boolean jj_3R_11() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3_6()) {
@@ -464,9 +832,11 @@ public class InputParser implements InputParserConstants {
   final private int[] jj_la1 = new int[0];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
+  static private int[] jj_la1_2;
   static {
       jj_la1_init_0();
       jj_la1_init_1();
+      jj_la1_init_2();
    }
    private static void jj_la1_init_0() {
       jj_la1_0 = new int[] {};
@@ -474,7 +844,10 @@ public class InputParser implements InputParserConstants {
    private static void jj_la1_init_1() {
       jj_la1_1 = new int[] {};
    }
-  final private JJCalls[] jj_2_rtns = new JJCalls[13];
+   private static void jj_la1_init_2() {
+      jj_la1_2 = new int[] {};
+   }
+  final private JJCalls[] jj_2_rtns = new JJCalls[29];
   private boolean jj_rescan = false;
   private int jj_gc = 0;
 
@@ -658,7 +1031,7 @@ public class InputParser implements InputParserConstants {
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[62];
+    boolean[] la1tokens = new boolean[66];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -672,10 +1045,13 @@ public class InputParser implements InputParserConstants {
           if ((jj_la1_1[i] & (1<<j)) != 0) {
             la1tokens[32+j] = true;
           }
+          if ((jj_la1_2[i] & (1<<j)) != 0) {
+            la1tokens[64+j] = true;
+          }
         }
       }
     }
-    for (int i = 0; i < 62; i++) {
+    for (int i = 0; i < 66; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;
@@ -702,7 +1078,7 @@ public class InputParser implements InputParserConstants {
 
   private void jj_rescan_token() {
     jj_rescan = true;
-    for (int i = 0; i < 13; i++) {
+    for (int i = 0; i < 29; i++) {
     try {
       JJCalls p = jj_2_rtns[i];
       do {
@@ -722,6 +1098,22 @@ public class InputParser implements InputParserConstants {
             case 10: jj_3_11(); break;
             case 11: jj_3_12(); break;
             case 12: jj_3_13(); break;
+            case 13: jj_3_14(); break;
+            case 14: jj_3_15(); break;
+            case 15: jj_3_16(); break;
+            case 16: jj_3_17(); break;
+            case 17: jj_3_18(); break;
+            case 18: jj_3_19(); break;
+            case 19: jj_3_20(); break;
+            case 20: jj_3_21(); break;
+            case 21: jj_3_22(); break;
+            case 22: jj_3_23(); break;
+            case 23: jj_3_24(); break;
+            case 24: jj_3_25(); break;
+            case 25: jj_3_26(); break;
+            case 26: jj_3_27(); break;
+            case 27: jj_3_28(); break;
+            case 28: jj_3_29(); break;
           }
         }
         p = p.next;

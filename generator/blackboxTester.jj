@@ -53,6 +53,9 @@ SKIP :
 /* string constants */
 TOKEN:
 {
+    < TRUE: "#t" > |
+    < FALSE: "#f" > |
+    < NOT: "not" > |
     < INTEGER: "int"> |
     < STRING: "string"> |
     < CHARACTER: "character"> |
@@ -82,7 +85,8 @@ TOKEN:
     < TILDA: "~" > |
     < HEX_ESCAPE: "\\x" > |
     < LEFT_PAREN: "(" > |
-    < RIGHT_PAREN: ")" >
+    < RIGHT_PAREN: ")" > |
+    < UINT10: (["0"-"9"])+ >
 }
 
 /* unicode groups */
@@ -301,27 +305,96 @@ Type Type(boolean addToListContext) :
 void Equation() :
 {
     Term leftHandSide;
-    Term rightHandSide;
+    RHS rightHandSide;
     HashSet<String> seenVariables = new HashSet<String>();
 }
 {
-    leftHandSide=Term(seenVariables, false, true) <EQUALS> rightHandSide=Term(seenVariables, false, false)
+    leftHandSide=Term(seenVariables, false) <EQUALS> rightHandSide=RHS(seenVariables, false)
     {
         currentObjectList.peek().add(new Equation(leftHandSide, rightHandSide)); 
     }
 }
 
-Term Term(HashSet<String> seenVariables, boolean addToList, boolean leftHandSide) :
+Term Term(HashSet<String> seenVariables, boolean addToList) :
 {   
     Term term;
 }
 {
-    (term=Variable(seenVariables, leftHandSide)|term=RewriteOperation(seenVariables, leftHandSide))
+    (term=Variable(seenVariables, true)|term=RewriteOperation(seenVariables))
     {
         if (addToList) {
             currentObjectList.peek().add(term);
         }
         return term;
+    }
+}
+
+RHS RHS(HashSet<String> seenVariables, boolean addToList) :
+{   
+    RHS rhs;
+}
+{
+    (rhs=RHSPrimitive()|rhs=Variable(seenVariables, false)|rhs=RHSPrimitiveOperation(seenVariables)|rhs=RHSOperation(seenVariables))
+    {
+        if (addToList) {
+            currentObjectList.peek().add(rhs);
+        }
+        return rhs;
+    }
+}
+
+RHS RHSPrimitive() :
+{
+    RHS rhs;
+} {
+    (<TRUE>|<FALSE>|<UINT10>)
+    {
+        if (token.kind == InputParserConstants.TRUE) {
+            rhs = new RHSTrue();
+        } else if (token.kind == InputParserConstants.FALSE) {
+            rhs = new RHSFalse();
+        } else {
+            rhs = new RHSInteger(Integer.valueOf(token.image));
+        }
+        
+        return rhs;
+    }
+}
+
+RHSPrimitiveOperation RHSPrimitiveOperation(HashSet<String> seenVariables) :
+{
+    String operation;
+}
+{
+    { openListContext(RHS.class); }
+    <LEFT_PAREN> operation=RHSPrimitiveOperationName() (RHS(seenVariables, true))* <RIGHT_PAREN>
+    {        
+        return new RHSPrimitiveOperation(operation, popCurrentObjectList(RHS.class));
+    }
+}
+
+String RHSPrimitiveOperationName() :
+{}
+{
+    (<NOT>|<PLUS>|<MINUS>|<ASTERIX>|<EQUALS>|<LESS_THAN>|<GREATER_THAN>)
+    {
+        return token.image;
+    }
+}
+
+RHSOperation RHSOperation(HashSet<String> seenVariables) :
+{
+    String operation;
+}
+{
+    { openListContext(RHS.class); }
+    <LEFT_PAREN> operation=Operation() (RHS(seenVariables, true))* <RIGHT_PAREN>
+    {
+        if(!operations.contains(operation)) {
+            throw new ParseException("Illegal operation: " + operation);
+        }
+        
+        return new RHSOperation(operation, popCurrentObjectList(RHS.class));
     }
 }
 
@@ -342,13 +415,13 @@ Variable Variable(HashSet<String> seenVariables, boolean leftHandSide) :
     }
 }
 
-Operation RewriteOperation(HashSet<String> seenVariables, boolean leftHandSide) :
+Operation RewriteOperation(HashSet<String> seenVariables) :
 {
     String operation;
 }
 {
     { openListContext(Term.class); }
-    <LEFT_PAREN> operation=Operation() (Term(seenVariables, true, leftHandSide))* <RIGHT_PAREN>
+    <LEFT_PAREN> operation=Operation() (Term(seenVariables, true))* <RIGHT_PAREN>
     {
         if(!operations.contains(operation)) {
             throw new ParseException("Illegal operation: " + operation);

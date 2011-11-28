@@ -5,9 +5,9 @@ package blackboxTester.parser.ast;
  */
 public class Equation {
 	private Term leftHandSide;
-	private Term rightHandSide;
+	private RHS rightHandSide;
 	
-	public Equation(Term leftHandSide, Term rightHandSide) {
+	public Equation(Term leftHandSide, RHS rightHandSide) {
 		this.leftHandSide = leftHandSide;
 		this.rightHandSide = rightHandSide;
 	}
@@ -16,7 +16,7 @@ public class Equation {
 		return leftHandSide;
 	}
 	
-	public Term getRightHandSide() {
+	public RHS getRightHandSide() {
 		return rightHandSide;
 	}
 }

@@ -1,34 +1,42 @@
-Signatures: 
-ADT: List
+Signatures:
 
-    emptyList   :              ->  List
-    cons        :  int * List  ->  List
-    isEmpty     :  List        ->  boolean
-    first       :  List        ->  int
-    rest        :  List        ->  List
-    toSet       :  List        ->  Set
+ADT: Nat
+    zero  :             -> Nat
+    succ  :   Nat       -> Nat
+    pred  :   Nat       -> Nat
+    asInt :  Nat       -> int
+    eqNat :  Nat * Nat -> boolean
+    plus  :   Nat * Nat -> Nat
+    times :  Nat * Nat -> Nat
+    power :  Nat * Nat -> Nat
+    minus :  Nat * Nat -> Nat
 
-ADT: Set
+ADT: Factorial
 
-    emptySet     :             ->  Set
-    adjoin       :  Set * int  ->  Set
-    isEmpty      :  Set        ->  boolean
-    choose       :  Set        ->  int
-    others       :  Set        ->  Set
-    union        :  Set * Set  ->  Set
-    intersection :  Set * Set  ->  Set
-    toList       :  Set        ->  List
+    factorial : Nat -> Nat
 
 Equations:
 
-    (choose (adjoin s k)) = k
+    (pred (succ m))  =  m
 
-    (others (adjoin s k)) = s
+    (asInt (minus m n)) = (- (asInt m) (asInt n))
+    (asInt (zero))  =  0
+    (asInt (succ m))  =  (+ 1 (asInt m))
 
-    (union (emptySet) s2) = s2
-    (union (adjoin s1 k) s2) = (union s1 (adjoin s2 k))
+    (eqNat (zero) (zero))  =  #t
+    (eqNat (zero) (succ m))  =  #f
+    (eqNat (succ m) (zero))  =  #f
+    (eqNat (succ m) (succ n))  =  (eqNat m n)
 
-    (intersection (emptySet) s2) = (emptySet)
-    (intersection (adjoin s1 k) s2)
-        = (union (intersection s1 s2)
-                 (intersection (adjoin (emptySet) k) s2))
+    (plus m (zero))  =  m
+    (plus m (succ n))  =  (succ (plus m n))
+
+    (times m (zero))  =  (zero)
+    (times m (succ n))  =  (plus m (times m n))
+
+    (power (zero) (zero))  =  (succ (zero))
+    (power (succ m) (zero))  =  (succ (zero))
+    (power m (succ n))  =  (times m (power m n))
+
+    (factorial (zero))  =  (succ (zero))
+    (factorial (succ n))  =  (times (succ n) (factorial n))                                                         

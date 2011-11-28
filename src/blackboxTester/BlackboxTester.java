@@ -29,15 +29,14 @@ public class BlackboxTester {
 		
 		int count = 0;
 		ArrayList<AST> generatedASTs = ASTGenerator.generateASTs(input.getSignatures());
-		ArrayList<AST> reducedASTs = deepCopy(generatedASTs);
 		ArrayList<Equation> equations = input.getEquations();
 		
 		Evaluate evaluator = new Evaluate();
-		evaluator.replace(reducedASTs, equations);
+		ArrayList<AST> reducedASTs = evaluator.replace(generatedASTs, equations);
 		
 		for (int i = 0; i < generatedASTs.size(); i++) {
 			
-			if (reducedASTs.get(i).isPrimitive()) {
+			if (reducedASTs.get(i).isFullyReduced()) {
 				out.println(generatedASTs.get(i).toString());
 				out.println(reducedASTs.get(i).toString());
 			

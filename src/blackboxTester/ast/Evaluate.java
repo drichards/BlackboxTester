@@ -2,14 +2,17 @@ package blackboxTester.ast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 
-import blackboxTester.ast.AST;
-import blackboxTester.ast.FunctionCall;
+import blackboxTester.parser.ast.Equation;
+import blackboxTester.parser.ast.Operation;
+import blackboxTester.parser.ast.RHS;
+import blackboxTester.parser.ast.RHSFalse;
+import blackboxTester.parser.ast.RHSInteger;
+import blackboxTester.parser.ast.RHSOperation;
+import blackboxTester.parser.ast.RHSPrimitiveOperation;
+import blackboxTester.parser.ast.RHSTrue;
 import blackboxTester.parser.ast.Term;
 import blackboxTester.parser.ast.Variable;
-import blackboxTester.parser.ast.Operation;
-import blackboxTester.parser.ast.Equation;
 
 /**
  * The Class Evaluate provides one public method that will try to replace and 
@@ -20,6 +23,8 @@ import blackboxTester.parser.ast.Equation;
  *
  */
 public class Evaluate  {
+	
+	private static final int MAX_REWRITE_ATTEMPTS = 100;
 
 	/**
 	 * Reduces all the ASTs using the provided equations. Replace will ignore any AST 
@@ -28,37 +33,26 @@ public class Evaluate  {
 	 * @param asts List of ASTs to be reduced
 	 * @param eqList List of equations used for the reduction
 	 */
-	public void replace(ArrayList<AST> asts, ArrayList<Equation> eqList) {
-		AST newAST = null;
-		for(int index = 0; index < asts.size(); index++) {
-			AST arg = asts.get(index);
-
-			HashSet<String> seenASTs = new HashSet<String>();
-			seenASTs.add(arg.getHash());
+	public ArrayList<AST> replace(ArrayList<AST> asts, ArrayList<Equation> eqList) {
+		ArrayList<AST> reducedASTs = new ArrayList<AST>();
+		for(AST ast : asts) {
+			AST reducedAST = ast.deepCopy();
 			
-			Boolean replaced;
-			do {
-				replaced = false;
-				for(Equation eq : eqList) {
-					newAST = this.rewrite(arg, eq);
-					if (newAST != null) {
-						// replace the current ast in asts with the new ast
-						asts.set(index, newAST);
-						arg = newAST;
-						replaced = true;
-						
-						String hash = newAST.getHash();
-						
-						if (seenASTs.contains(hash)) {
-							replaced = false;
-							break;
-						} else {
-							seenASTs.add(hash);
-						}
-					}
+			try {
+				AST newAST = rewrite(reducedAST, eqList, 0);
+				
+				if (newAST != null) {
+					// replace the current ast in asts with the new ast
+					reducedAST = newAST;
 				}
-			} while (replaced);
+			} catch (InfiniteRewriteException e) {
+				// no-op, we just want to break out of our infinite loop
+			}
+			
+			reducedASTs.add(reducedAST);
 		}
+		
+		return reducedASTs;
 	}
 
 	/**
@@ -70,25 +64,51 @@ public class Evaluate  {
 	 * @param ast the AST to be rewritten
 	 * @param equation Equation used to rewrite the AST
 	 * @return AST, whether the AST matches the equation or not
+	 * @throws InfiniteRewriteException 
 	 */
-	private AST rewrite(AST ast, Equation equation ) {
-		AST newAST = match(ast, equation);
-		if (newAST != null) {
-			return newAST;
+	private AST rewrite(AST ast, ArrayList<Equation> equations, int counter) throws InfiniteRewriteException {
+		if (counter > MAX_REWRITE_ATTEMPTS) {
+			throw new InfiniteRewriteException();
 		}
-		if (!(ast instanceof FunctionCall)) return null;
-		ArrayList<AST> functionArgs = ((FunctionCall) ast).getArgs();
+				
+		if (ast.isFullyReduced()) {
+			return null;
+		}
+		
+		IFunctionCall functionCall = (IFunctionCall) ast;
+		ArrayList<AST> functionArgs = functionCall.getArgs();
+		
+		boolean rewritten = false;
+		
 		for(int index = 0; index < functionArgs.size(); index++) {
 			AST arg = functionArgs.get(index);
-			if (!arg.isPrimitive()) {
-				AST newArg = rewrite(arg, equation);
+			if (!arg.isFullyReduced()) {
+				AST newArg = rewrite(arg, equations, 0);
 				if (newArg != null){
-					((FunctionCall)(ast)).getArgs().set(index, newArg);
-					return ast;
+					functionArgs.set(index, newArg);
+					rewritten = true;
 				}
 			}
 		}
-		return null;
+			
+		if (!functionCall.isPrimitive()) {
+			for (Equation equation : equations) {
+				AST newAST = match(ast, equation);
+				if (newAST != null) {
+					ast = newAST;
+					
+					newAST = rewrite(newAST, equations, ++counter);
+					
+					if (newAST != null) {
+						ast = newAST;
+					}
+					
+					rewritten = true;
+				}
+			}
+		}
+		
+		return rewritten ? ast : null;
 	}
 
 	/**
@@ -157,14 +177,34 @@ public class Evaluate  {
 	 * @param env An environment mapping variables to ASTs.
 	 * @return A new AST rewritten from the right hand side and the environment.
 	 */
-	private AST rewriteWithEnv(Term rightHandside, HashMap<String, AST> env) {
+	private AST rewriteWithEnv(RHS rightHandside, HashMap<String, AST> env) {
 		if (rightHandside instanceof Variable) {
 			return env.get(((Variable)rightHandside).getName());
+		} else if (rightHandside instanceof RHSTrue) {
+			return new PrimitiveAST.BooleanAST(true);
+		} else if (rightHandside instanceof RHSFalse) {
+			return new PrimitiveAST.BooleanAST(false);
+		} else if (rightHandside instanceof RHSInteger) {
+			return new PrimitiveAST.IntegerAST(((RHSInteger)rightHandside).getValue());
+		} else if (rightHandside instanceof RHSOperation) {
+			RHSOperation operation = (RHSOperation)rightHandside;
+			
+			ArrayList<AST> args = new ArrayList<AST>();
+			for(RHS arg : operation.getArgs()) {
+				args.add(rewriteWithEnv(arg, env));
+			}
+			return new FunctionCall(operation.getName(), args);
+		} else {
+			RHSPrimitiveOperation operation = (RHSPrimitiveOperation)rightHandside;
+			
+			ArrayList<AST> args = new ArrayList<AST>();
+			for(RHS arg : operation.getArgs()) {
+				args.add(rewriteWithEnv(arg, env));
+			}
+			return new PrimitiveAST.PrimitiveFunctionCall(operation.getOperation(), args);
 		}
-		ArrayList<AST> args = new ArrayList<AST>();
-		for(Term arg : ((Operation)rightHandside).getArgs()) {
-			args.add(rewriteWithEnv(arg, env));
-		}
-		return new FunctionCall(((Operation)rightHandside).getName(), args);
 	}
+	
+	@SuppressWarnings("serial")
+	private static class InfiniteRewriteException extends Exception {}
 }
