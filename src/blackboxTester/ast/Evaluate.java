@@ -47,6 +47,8 @@ public class Evaluate  {
 				}
 			} catch (InfiniteRewriteException e) {
 				// no-op, we just want to break out of our infinite loop
+			} catch (NonDeterministicException e) {
+				// no-op, we just want to ignore non-deterministic expressions
 			}
 			
 			reducedASTs.add(reducedAST);
@@ -66,7 +68,11 @@ public class Evaluate  {
 	 * @return AST, whether the AST matches the equation or not
 	 * @throws InfiniteRewriteException 
 	 */
-	private AST rewrite(AST ast, ArrayList<Equation> equations, int counter) throws InfiniteRewriteException {
+	private AST rewrite(
+		AST ast, 
+		ArrayList<Equation> equations, 
+		int counter
+	) throws InfiniteRewriteException, NonDeterministicException {
 		if (counter > MAX_REWRITE_ATTEMPTS) {
 			throw new InfiniteRewriteException();
 		}
@@ -93,7 +99,7 @@ public class Evaluate  {
 			
 		if (!functionCall.isPrimitive()) {
 			for (Equation equation : equations) {
-				AST newAST = match(ast, equation);
+				AST newAST = match(ast, equation, equations);
 				if (newAST != null) {
 					ast = newAST;
 					
@@ -104,6 +110,7 @@ public class Evaluate  {
 					}
 					
 					rewritten = true;
+					break;
 				}
 			}
 		}
@@ -122,15 +129,35 @@ public class Evaluate  {
 	 * @param equations The equation to do the matching.
 	 * @return The rewritten AST or null if it didn't match.
 	 */
-	private AST match(AST ast, Equation equations) {
-		HashMap <String, AST> env = generateENV(
-			ast, equations.getLeftHandSide(), new HashMap<String, AST>()
+	private AST match(
+		AST ast, 
+		Equation equation, 
+		ArrayList<Equation> equations
+	) throws NonDeterministicException {
+		HashMap <String, AST> env = generateEnv(
+			ast, equation.getLeftHandSide(), new HashMap<String, AST>()
 		);
 		
 		if (env == null) {
 			return null;
+		} else if (matchCount(ast, equations) > 1) {
+			throw new NonDeterministicException();
 		}
-		return rewriteWithEnv(equations.getRightHandSide(), env);
+		return rewriteWithEnv(equation.getRightHandSide(), env);
+	}
+	
+	private int matchCount(AST ast, ArrayList<Equation> equations) {
+		int count = 0;
+		
+		for(Equation equation : equations) {
+			if (generateEnv(
+				ast, equation.getLeftHandSide(), new HashMap<String,AST>()
+			) != null) {
+				count++;
+			}
+		}
+		
+		return count;
 	}
 
 	/**
@@ -143,7 +170,7 @@ public class Evaluate  {
 	 * @return The update environment or null if the left hand side doesn't
 	 * match the ast.
 	 */
-	private HashMap<String, AST> generateENV(
+	private HashMap<String, AST> generateEnv(
 		AST ast, 
 		Term leftHandside, 
 		HashMap<String, AST> env
@@ -163,7 +190,7 @@ public class Evaluate  {
 		
 		int i;
 		for (i = 0; i < ((FunctionCall)ast).getArgs().size(); i++) {
-			env = generateENV(
+			env = generateEnv(
 					((FunctionCall)ast).getArgs().get(i), 
 					((Operation)leftHandside).getArgs().get(i), 
 					env);
@@ -212,4 +239,7 @@ public class Evaluate  {
 	
 	@SuppressWarnings("serial")
 	private static class InfiniteRewriteException extends Exception {}
+	
+	@SuppressWarnings("serial")
+	private static class NonDeterministicException extends Exception {}
 }
