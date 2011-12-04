@@ -24,7 +24,7 @@ public class ASTGenerator {
 	/**
 	 * Depth to which we will generate all possible abstract syntax trees.
 	 */
-	private static final int DEPTH = 10;
+	private static final int DEPTH = 3;
 	
 	/**
 	 * Maximum number of expressions we want to generate
@@ -180,6 +180,7 @@ public class ASTGenerator {
 				// add all the ASTs to the return list
 				for (AST ast : trees.get(type)) {
 					returnList.add(ast);
+					// add a pair instead of just an ast (AST, primitiveType)
 				}
 			}
 		}

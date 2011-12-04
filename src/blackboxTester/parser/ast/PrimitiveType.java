@@ -23,6 +23,8 @@ public abstract class PrimitiveType implements Type {
 		return true;
 	}
 	
+	//TODO: public String equalityComparator() {}
+	
 	@Override
 	public boolean equals(Object other) {
 		return (other instanceof PrimitiveType) && 

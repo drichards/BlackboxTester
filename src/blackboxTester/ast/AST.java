@@ -27,4 +27,9 @@ public interface AST{
 	 * @return True if this AST is in it's fully reduced primitive form.
 	 */
 	public boolean isFullyReduced();
+	
+	/**
+	 * @return The equality comparator, if primitive, for this AST
+	 */
+	public String getComparator();
 }

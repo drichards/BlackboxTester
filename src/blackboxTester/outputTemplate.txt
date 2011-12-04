@@ -1,0 +1,51 @@
+;;; A black-box test program
+
+(import (rnrs base)
+        (rnrs exceptions)        ; for the guard syntax
+        (rnrs io simple)         ; for display etc
+	//imports
+
+;;; Counters for the summary report when testing is complete.
+
+(define tests-run 0)
+(define tests-passed 0)
+(define tests-failed 0)
+
+;;; Syntax to make testing more convenient.
+;;;
+;;; (test <name> <expr>) evaluates <expr>.
+;;; If <expr> evaluates to a true value (any value other #f),
+;;; then the test has been passed.
+;;; If <expr> evaluates to #f, then the test has been failed.
+;;; If an exception occurs during evaluation of <expr>, then
+;;; the test has been failed.
+
+(define-syntax test
+  (syntax-rules ()
+    ((_ name expr)
+     (begin (set! tests-run (+ tests-run 1))
+            (if (guard (exn (else #f))
+                  expr)
+                (set! tests-passed (+ tests-passed 1))
+                (begin (set! tests-failed (+ tests-failed 1))
+                       (display "Failed test: ")
+                       (display name)
+                       (newline)))))))
+
+;;; The black-box tests.
+//tests
+
+;;; Summary of results.
+
+(display "SUMMARY: failed ")
+(display tests-failed)
+(display " of ")
+(display tests-run)
+(display " tests.")
+(newline)
+
+;;; Sanity check.
+
+(if (not (= tests-run
+            (+ tests-passed tests-failed)))
+    (begin (display "Oops...") (newline)))
