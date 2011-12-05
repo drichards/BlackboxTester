@@ -13,6 +13,10 @@ import blackboxTester.ast.generator.RandomPrimitiveGenerator;
 public abstract class PrimitiveAST implements AST {
 	protected PrimitiveAST() {}
 	
+	public String getComparator() {
+		return null;
+	}
+
 	@Override
 	public boolean isPrimitive() {
 		return true;
@@ -60,6 +64,11 @@ public abstract class PrimitiveAST implements AST {
 		public String toString() {
 			return value ? "#t" : "#f";
 		}
+		
+		@Override
+		public String getComparator() {
+			return "equal?";
+		}
 	}
 	
 	/**
@@ -79,6 +88,11 @@ public abstract class PrimitiveAST implements AST {
 		@Override
 		public String toString() {
 			return String.valueOf(value);
+		}
+		
+		@Override
+		public String getComparator() {
+			return "equal?";
 		}
 	}
 	
@@ -100,6 +114,11 @@ public abstract class PrimitiveAST implements AST {
 		public String toString() {
 			return String.valueOf(value);
 		}
+		
+		@Override
+		public String getComparator() {
+			return "=";
+		}
 	}
 	
 	/**
@@ -119,6 +138,11 @@ public abstract class PrimitiveAST implements AST {
 		@Override
 		public String toString() {
 			return value;
+		}
+
+		@Override
+		public String getComparator() {
+			return "equal?";
 		}
 	}
 	
@@ -173,6 +197,12 @@ public abstract class PrimitiveAST implements AST {
 			}
 			
 			return true;
+		}
+		
+		@Override
+		public String getComparator() {
+			//TODO Is this always "="?
+			return this.args.get(0).getComparator();
 		}
 	}
 }

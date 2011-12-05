@@ -1,3 +1,160 @@
+<<<<<<< HEAD
+;;; A black-box test program (uses code from 'test5.sps' in CS4500 course directory)
+
+(import (rnrs base)
+        (rnrs exceptions)        ; for the guard syntax
+        (rnrs io simple)         ; for display etc
+		(testing Bool)
+		(testing Nat)
+		(testing List)
+		(testing Set)
+		)
+
+;;; Counters for the summary report when testing is complete.
+
+(define tests-run 0)
+(define tests-passed 0)
+(define tests-failed 0)
+
+;;; Syntax to make testing more convenient.
+;;;
+;;; (test <name> <expr>) evaluates <expr>.
+;;; If <expr> evaluates to a true value (any value other #f),
+;;; then the test has been passed.
+;;; If <expr> evaluates to #f, then the test has been failed.
+;;; If an exception occurs during evaluation of <expr>, then
+;;; the test has been failed.
+
+(define-syntax test
+  (syntax-rules ()
+    ((_ name expr)
+     (begin (set! tests-run (+ tests-run 1))
+            (if (guard (exn (else #f))
+                  expr)
+                (set! tests-passed (+ tests-passed 1))
+                (begin (set! tests-failed (+ tests-failed 1))
+                       (display "Failed test: ")
+                       (display name)
+                       (newline)))))))
+
+;;; The black-box tests.
+(test "0" (= 0 (asInt (zero))))
+(test "1" (= (+ 1 0) (asInt (succ (zero)))))
+(test "2" (= 0 (asInt (pred (zero)))))
+(test "3" (= 0 (asInt (plus (zero) (zero)))))
+(test "4" (= 0 (asInt (times (zero) (zero)))))
+(test "5" (= (+ 1 0) (asInt (power (zero) (zero)))))
+(test "6" (= 0 (asInt (minus (zero) (zero)))))
+(test "7" (= 0 (asInt (first (emptyList)))))
+(test "8" (= 0 (asInt (choose (emptySet)))))
+(test "9" (equal? #t (asBoolean (true))))
+(test "10" (equal? #f (asBoolean (false))))
+(test "11" (equal? #t (isEmpty (emptyList))))
+(test "12" (equal? #t (isEmpty (emptySet))))
+(test "13" (equal? #f (isElementOf (zero) (emptySet))))
+(test "14" (equal? #t (asBoolean (ifBool (true) (true) (true)))))
+(test "15" (equal? #t (asBoolean (ifBool (false) (true) (true)))))
+(test "16" (equal? #f (asBoolean (ifBool (true) (false) (true)))))
+(test "17" (equal? #t (asBoolean (ifBool (false) (false) (true)))))
+(test "18" (equal? #t (asBoolean (ifBool (true) (true) (false)))))
+(test "19" (equal? #f (asBoolean (ifBool (false) (true) (false)))))
+(test "20" (equal? #f (asBoolean (ifBool (true) (false) (false)))))
+(test "21" (equal? #f (asBoolean (ifBool (false) (false) (false)))))
+(test "22" (equal? #t (asBoolean (eqNatBool (zero) (zero)))))
+(test "23" (equal? #t (asBoolean (isEmptyBool (emptyList)))))
+(test "24" (equal? #t (asBoolean (isEmptyBool (emptySet)))))
+(test "25" (equal? #f (asBoolean (isEltOfBool (zero) (emptySet)))))
+(test "26" (equal? #f (isEmpty (cons (zero) (emptyList)))))
+(test "27" (equal? #t (isEmpty (rest (emptyList)))))
+(test "28" (equal? #t (isEmpty (toList (emptySet)))))
+(test "29" (equal? #t (isEmpty (toSet (emptyList)))))
+(test "30" (equal? #f (isEmpty (adjoin (emptySet) (zero)))))
+(test "31" (equal? #f (isEmpty (singleton (zero)))))
+(test "32" (equal? #t (isEmpty (others (emptySet)))))
+(test "33" (equal? #t (isEmpty (union (emptySet) (emptySet)))))
+(test "34" (equal? #t (isEmpty (intersection (emptySet) (emptySet)))))
+(test "35" (equal? #t (isEmpty (ifBoolSets (true) (emptySet) (emptySet)))))
+(test "36" (equal? #t (isEmpty (ifBoolSets (false) (emptySet) (emptySet)))))
+(test "37" (equal? #f (isElementOf (succ (zero)) (toSet (emptyList)))))
+(test "38" (equal? #f (isElementOf (pred (zero)) (toSet (emptyList)))))
+(test "39" (equal? #f (isElementOf (plus (zero) (zero)) (toSet (emptyList)))))
+(test "40" (equal? #f (isElementOf (times (zero) (zero)) (toSet (emptyList)))))
+(test "41" (equal? #f (isElementOf (power (zero) (zero)) (toSet (emptyList)))))
+(test "42" (equal? #f (isElementOf (minus (zero) (zero)) (toSet (emptyList)))))
+(test "43" (equal? #f (isElementOf (first (emptyList)) (toSet (emptyList)))))
+(test "44" (equal? #f (isElementOf (choose (emptySet)) (toSet (emptyList)))))
+(test "45" (equal? #f (isElementOf (succ (zero)) (adjoin (emptySet) (zero)))))
+(test "46" (equal? #t (isElementOf (pred (zero)) (adjoin (emptySet) (zero)))))
+(test "47" (equal? #t (isElementOf (plus (zero) (zero)) (adjoin (emptySet) (zero)))))
+(test "48" (equal? #t (isElementOf (times (zero) (zero)) (adjoin (emptySet) (zero)))))
+(test "49" (equal? #f (isElementOf (power (zero) (zero)) (adjoin (emptySet) (zero)))))
+(test "50" (equal? #t (isElementOf (minus (zero) (zero)) (adjoin (emptySet) (zero)))))
+(test "51" (equal? #t (isElementOf (first (emptyList)) (adjoin (emptySet) (zero)))))
+(test "52" (equal? #t (isElementOf (choose (emptySet)) (adjoin (emptySet) (zero)))))
+(test "53" (equal? #f (isElementOf (succ (zero)) (singleton (zero)))))
+(test "54" (equal? #t (isElementOf (pred (zero)) (singleton (zero)))))
+(test "55" (equal? #t (isElementOf (plus (zero) (zero)) (singleton (zero)))))
+(test "56" (equal? #t (isElementOf (times (zero) (zero)) (singleton (zero)))))
+(test "57" (equal? #f (isElementOf (power (zero) (zero)) (singleton (zero)))))
+(test "58" (equal? #t (isElementOf (minus (zero) (zero)) (singleton (zero)))))
+(test "59" (equal? #t (isElementOf (first (emptyList)) (singleton (zero)))))
+(test "60" (equal? #t (isElementOf (choose (emptySet)) (singleton (zero)))))
+(test "61" (equal? #f (isElementOf (succ (zero)) (others (emptySet)))))
+(test "62" (equal? #f (isElementOf (pred (zero)) (others (emptySet)))))
+(test "63" (equal? #f (isElementOf (plus (zero) (zero)) (others (emptySet)))))
+(test "64" (equal? #f (isElementOf (times (zero) (zero)) (others (emptySet)))))
+(test "65" (equal? #f (isElementOf (power (zero) (zero)) (others (emptySet)))))
+(test "66" (equal? #f (isElementOf (minus (zero) (zero)) (others (emptySet)))))
+(test "67" (equal? #f (isElementOf (first (emptyList)) (others (emptySet)))))
+(test "68" (equal? #f (isElementOf (choose (emptySet)) (others (emptySet)))))
+(test "69" (equal? #f (isElementOf (succ (zero)) (union (emptySet) (emptySet)))))
+(test "70" (equal? #f (isElementOf (pred (zero)) (union (emptySet) (emptySet)))))
+(test "71" (equal? #f (isElementOf (plus (zero) (zero)) (union (emptySet) (emptySet)))))
+(test "72" (equal? #f (isElementOf (times (zero) (zero)) (union (emptySet) (emptySet)))))
+(test "73" (equal? #f (isElementOf (power (zero) (zero)) (union (emptySet) (emptySet)))))
+(test "74" (equal? #f (isElementOf (minus (zero) (zero)) (union (emptySet) (emptySet)))))
+(test "75" (equal? #f (isElementOf (first (emptyList)) (union (emptySet) (emptySet)))))
+(test "76" (equal? #f (isElementOf (choose (emptySet)) (union (emptySet) (emptySet)))))
+(test "77" (equal? #f (isElementOf (succ (zero)) (intersection (emptySet) (emptySet)))))
+(test "78" (equal? #f (isElementOf (pred (zero)) (intersection (emptySet) (emptySet)))))
+(test "79" (equal? #f (isElementOf (plus (zero) (zero)) (intersection (emptySet) (emptySet)))))
+(test "80" (equal? #f (isElementOf (times (zero) (zero)) (intersection (emptySet) (emptySet)))))
+(test "81" (equal? #f (isElementOf (power (zero) (zero)) (intersection (emptySet) (emptySet)))))
+(test "82" (equal? #f (isElementOf (minus (zero) (zero)) (intersection (emptySet) (emptySet)))))
+(test "83" (equal? #f (isElementOf (first (emptyList)) (intersection (emptySet) (emptySet)))))
+(test "84" (equal? #f (isElementOf (choose (emptySet)) (intersection (emptySet) (emptySet)))))
+(test "85" (equal? #f (isElementOf (succ (zero)) (ifBoolSets (true) (emptySet) (emptySet)))))
+(test "86" (equal? #f (isElementOf (pred (zero)) (ifBoolSets (true) (emptySet) (emptySet)))))
+(test "87" (equal? #f (isElementOf (plus (zero) (zero)) (ifBoolSets (true) (emptySet) (emptySet)))))
+(test "88" (equal? #f (isElementOf (times (zero) (zero)) (ifBoolSets (true) (emptySet) (emptySet)))))
+(test "89" (equal? #f (isElementOf (power (zero) (zero)) (ifBoolSets (true) (emptySet) (emptySet)))))
+(test "90" (equal? #f (isElementOf (minus (zero) (zero)) (ifBoolSets (true) (emptySet) (emptySet)))))
+(test "91" (equal? #f (isElementOf (first (emptyList)) (ifBoolSets (true) (emptySet) (emptySet)))))
+(test "92" (equal? #f (isElementOf (choose (emptySet)) (ifBoolSets (true) (emptySet) (emptySet)))))
+(test "93" (equal? #f (isElementOf (succ (zero)) (ifBoolSets (false) (emptySet) (emptySet)))))
+(test "94" (equal? #f (isElementOf (pred (zero)) (ifBoolSets (false) (emptySet) (emptySet)))))
+(test "95" (equal? #f (isElementOf (plus (zero) (zero)) (ifBoolSets (false) (emptySet) (emptySet)))))
+(test "96" (equal? #f (isElementOf (times (zero) (zero)) (ifBoolSets (false) (emptySet) (emptySet)))))
+(test "97" (equal? #f (isElementOf (power (zero) (zero)) (ifBoolSets (false) (emptySet) (emptySet)))))
+(test "98" (equal? #f (isElementOf (minus (zero) (zero)) (ifBoolSets (false) (emptySet) (emptySet)))))
+(test "99" (equal? #f (isElementOf (first (emptyList)) (ifBoolSets (false) (emptySet) (emptySet)))))
+(test "100" (equal? #f (isElementOf (choose (emptySet)) (ifBoolSets (false) (emptySet) (emptySet)))))
+
+;;; Summary of results.
+
+(display "SUMMARY: failed ")
+(display tests-failed)
+(display " of ")
+(display tests-run)
+(display " tests.")
+(newline)
+
+;;; Sanity check.
+
+(if (not (= tests-run
+            (+ tests-passed tests-failed)))
+    (begin (display "Oops...") (newline)))
+=======
 (asInt (zero))
 0
 (asInt (succ (zero)))
@@ -5370,3 +5527,4 @@
 #t
 (eqNat (power (factorial (zero)) (factorial (zero))) (plus (plus (zero) (zero)) (power (zero) (zero))))
 #t
+>>>>>>> d62ad5a69bf0c1ccc9be95730b108fb5824b6fdd

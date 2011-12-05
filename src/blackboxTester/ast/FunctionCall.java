@@ -88,4 +88,13 @@ public class FunctionCall implements IFunctionCall {
 		
 		return new String(digest.digest(toString().getBytes()));
 	}
+
+	@Override
+	public String getComparator() {
+		//if(this.methodName.equals("+") || this.methodName.equals("-")) {
+			return "poop";
+		//} else {
+			//return null;
+		//}
+	}
 }
