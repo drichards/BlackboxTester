@@ -24,7 +24,7 @@ public class ASTGenerator {
 	/**
 	 * Depth to which we will generate all possible abstract syntax trees.
 	 */
-	private static final int DEPTH = 3;
+	private static final int DEPTH = 10;
 	
 	/**
 	 * Maximum number of expressions we want to generate
@@ -226,6 +226,10 @@ public class ASTGenerator {
 				ArrayList<AST> astList = new ArrayList<AST>();
 				astList.add(ast);
 				permutations.add(astList);
+				
+				if (permutations.size() >= MAX_EXPRESSIONS) {
+					break;
+				}
 			}
 		}
 		
@@ -241,6 +245,10 @@ public class ASTGenerator {
 			
 			for (AST ast : newList) {
 				for (ArrayList<AST> permutation : permutations) {
+					if (newPermutations.size() >= MAX_EXPRESSIONS) {
+						break;
+					}
+					
 					ArrayList<AST> astList = new ArrayList<AST>(permutation);
 					astList.add(ast);
 					newPermutations.add(astList);

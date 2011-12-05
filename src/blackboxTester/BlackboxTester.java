@@ -26,7 +26,6 @@ public class BlackboxTester {
 	 */
 	public static void main(String[] args) throws Exception {
 		Input input = Parser.parse(args[0]);
-		//PrintWriter out = new PrintWriter(args[1], "UTF8");
 		
 		int count = 0;
 		List<AST> generatedASTs = (List<AST>)ASTGenerator.generateASTs(input.getSignatures());
@@ -39,9 +38,6 @@ public class BlackboxTester {
 		for (int i = 0; i < generatedASTs.size(); i++) {
 			
 			if (reducedASTs.get(i).isFullyReduced()) {
-				//out.println(generatedASTs.get(i).toString());
-				//out.println(reducedASTs.get(i).toString());
-				System.out.println(i);
 				count++;
 				if (count >= 1000) {
 					reducedASTs =  reducedASTs.subList(0, i);
@@ -49,7 +45,6 @@ public class BlackboxTester {
 					break;
 				}
 			} else {
-				System.out.println("BAD ONE");
 				reducedASTs.remove(i);
 				generatedASTs.remove(i);
 				i--;
@@ -61,16 +56,5 @@ public class BlackboxTester {
 		}
 		OutputGenerator outputGen = new OutputGenerator(generatedASTs, reducedASTs, typeNames, args[1]);
 		outputGen.generateOutput();
-		//out.close();
-	}
-	
-	private static ArrayList<AST> deepCopy(ArrayList<AST> asts) {
-		ArrayList<AST> copiedAsts = new ArrayList<AST>();
-		
-		for (AST ast : asts) {
-			copiedAsts.add(ast.deepCopy());
-		}
-		
-		return copiedAsts;
 	}
 }
