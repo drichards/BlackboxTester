@@ -18,4 +18,8 @@ public class Operation implements Term {
 	public ArrayList<Term> getArgs() {
 		return args;
 	}
+	
+	public boolean isVariable() {
+		return false;
+	}
 }

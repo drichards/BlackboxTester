@@ -18,4 +18,8 @@ public class RHSOperation implements RHS {
 	public ArrayList<RHS> getArgs() {
 		return args;
 	}
+	
+	public boolean isVariable() {
+		return false;
+	}
 }

@@ -10,4 +10,8 @@ public class Variable implements Term, RHS {
 	public String getName() {
 		return name;
 	}
+	
+	public boolean isVariable() {
+		return true;
+	}
 }

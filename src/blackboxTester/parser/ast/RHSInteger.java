@@ -10,4 +10,8 @@ public class RHSInteger implements RHS {
 	public int getValue() {
 		return value;
 	}
+	
+	public boolean isVariable() {
+		return false;
+	}
 }
