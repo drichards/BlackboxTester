@@ -13,9 +13,11 @@ To run:
     where
 
     file1 is the name of an existing file that contains
-    textual input in the syntax specified below.
+    textual input in the syntax specified below. This file
+    is a plain text (UTF-8) file that specifies an abstract data type
+    using the syntax shown below.
 
-    file2 is the name of a file to be created by the software;
+    file2 is the name of a file to be created by the software (UTF-8 encoding);
     when the program terminates, that file will contain the
     source code for an R6RS top-level program that imports the
     libraries to be tested, performs black-box testing of those
@@ -72,3 +74,86 @@ Source Layout:
     blackboxTester.outputGeneration.OutputGenerator
         This handles taking fully reduced ASTs and creating a scheme
         blackbox tester that will test the given algebraic specification.
+        
+ Input syntax:
+    The names of nonterminal symbols are enclosed within angle brackets.  
+    The <empty> nonterminal stands for the empty sequence of grammar symbols.  
+    All terminal symbols are enclosed within double quotes; the double quotes 
+    are not themselves part of the terminal symbol.
+
+    <input>  ::=  "Signatures:" <signatures> "Equations:" <equations>
+
+    <signatures>  ::=  <signature>
+                    |  <signature> <signatures>
+
+    <signature>  ::=  "ADT:" <typename> <operationSpecs>
+
+    <typename>  ::=  <identifier>
+
+    <operationSpecs>  ::=  <operationSpec>
+                        |  <operationSpec> <operationSpecs>
+
+    <operationSpec>  ::=  <operation> ":"            "->" <type>
+                       |  <operation> ":" <argTypes> "->" <type>
+
+    <operation>  ::=  <identifier>
+
+    <argTypes>  ::=  <type>
+                  |  <type> "*" <argTypes>
+
+    <type>  ::=  "int"
+              |  "boolean"
+              |  "character"
+              |  "string"
+              |  <typename>
+
+    <equations>  ::=  <empty>
+                   |  <equation> <equations>
+
+    <equation>  ::=  <term> "=" <rhs>
+
+    <term>  ::=  <identifier>
+              |  "(" <operation> <args> ")"
+
+    <args>  ::=  <empty>
+              |  <term> <args>
+
+    <rhs>  ::=  "#t"  |  "#f"
+             |  <uinteger 10>
+             |  <identifier>
+             |  "(" <operation> <rhsArgs> ")"
+             |  "(" <primitive> <rhsArgs> ")"
+
+    <rhsArgs>  ::=  <empty>
+                 |  <rhs> <rhsArgs>
+
+    <primitive>  ::=  "not"
+                   |  "+"  |  "-"  |  "*"
+                   |  "="  |  "<"  |  ">"
+
+
+Input Syntax Notes:
+    
+    The syntaxes of the <identifier> and <uinteger 10> nonterminals
+    are specified by R6RS 4.2.1.
+    
+    Every <typename> that's used as a <type> must be declared
+    as a <typename> by a <signature>.
+    
+    Every <operation> that's used in a <term> must be declared
+    as an <operation> by an <operationSpec>.
+    
+    Every <identifier> that appears on the right hand side of
+    an <equation> must appear on the left hand side of that
+    <equation>.
+    
+    No <identifier> may appear more than once on the left hand
+    side of an <equation>.
+    
+    Except for parentheses, which are themselves delimiters, all
+    terminals should be delimited by whitespace or parentheses or
+    the beginning or end of the input file.  (In other words,
+    every pair of adjacent terminals should be separated by
+    whitespace unless one of them is a parenthesis.)
+
+ 
