@@ -32,6 +32,7 @@ Notes:
 	"Signatures:", "Equations:", "ADT:", ":", "->", "*", "int", 
 	"boolean", "character", "string", "=", "+", "-", "<", and ">"
 
+    Javadocs are located in the docs folder at the root of this project.
 
 Software used:
     JavaCC was used to generate the parser generator for
