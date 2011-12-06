@@ -6,13 +6,10 @@ Team members:
 
 To compile:
     javac -d bin -cp assets/junit-4.10.jar -sourcepath src src/*/*.java
-    
-To run tests:
-    java -cp bin:assets/junit-4.10.jar org.junit.runner.JUnitCore blackboxTester.tests.AllTests
 
 To run:
     ./cs4500 file1 file2
-
+    
     where
 
     file1 is the name of an existing file that contains
@@ -22,6 +19,14 @@ To run:
     when your program terminates, that file must contain the
     textual output of your program in the format specified
     below.
+
+    
+To compile tests:
+    javac -d bin -cp assets/junit-4.10.jar -sourcepath src src/blackboxTester/tests/*.java   
+ 
+To run tests:
+    java -cp bin:assets/junit-4.10.jar org.junit.runner.JUnitCore blackboxTester.tests.AllTests
+
 
 Notes:
 	Non-deterministic checking has been implemented, so any non-deterministic
