@@ -5,7 +5,10 @@ Team members:
     Seth Tringale    - stringale@gmail.com
 
 To compile:
-    javac -d bin -sourcepath src src/*/*.java
+    javac -d bin -cp assets/junit-4.10.jar -sourcepath src src/*/*.java
+    
+To run tests:
+    java -cp bin:assets/junit-4.10.jar org.junit.runner.JUnitCore blackboxTester.tests.AllTests
 
 To run:
     ./cs4500 file1 file2
@@ -20,21 +23,24 @@ To run:
     and output the results of the tests.
 
 Notes:
-	-For the StackInt example, tests can be generated as follows:
+	Non-deterministic checking has been implemented, so any non-deterministic
+	expression will not be tested by the output test program.
 	
-	(top (push (pop (empty)) -1))
-	*rewrites to:*
-	-1
-	
-	Even though (pop (empty)) would throw an error in a standard stack
-	implementation.
+	The following terminals are reserved identifiers and therefor should
+	not be used in the input specification: 
+	"Signatures:", "Equations:", "ADT:", ":", "->", "*", "int", 
+	"boolean", "character", "string", "=", "+", "-", "<", and ">"
 
+    Javadocs are located in the docs folder at the root of this project.
 
 Software used:
     JavaCC was used to generate the parser generator for
     this project.  The license for JavaCC can be found at 
     generator/javacc-5.0/LICENSE
     More info on JavaCC can be found at http://javacc.java.net
+    
+    JUnit is used for testing purposes.
+    More info can be found at http://www.junit.org
 
 Source Layout:
     The main program is run from blackboxTester.BlackboxTester.  That
@@ -55,9 +61,7 @@ Source Layout:
     	This contains the function "replace" which rewrites ASTs
     	and throws out any that aren't applicable to testing (along with other
     	helper functions). It is called in main method of BlackboxTester.
-
-    blackboxTester.outputGenerator
-        This class is used last to generate the scheme output program. It uses
-	a text file (outputTemplate.txt) as a template and is filled up with
-        generated tests. When run, the scheme program runs the tests and displays 
-	their results.
+    
+    blackboxTester.outputGeneration.OutputGenerator
+        This handles taking fully reduced ASTs and creating a scheme
+        blackbox tester that will test the given algebraic specification.
