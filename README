@@ -28,7 +28,7 @@ Notes:
 	Non-deterministic checking has been implemented, so any non-deterministic
 	expression will not be tested by the output test program.
 	
-	The following terminals are reserved identifiers and therefor should
+	The following terminals are reserved identifiers and therefore should
 	not be used in the input specification: 
 	"Signatures:", "Equations:", "ADT:", ":", "->", "*", "int", 
 	"boolean", "character", "string", "=", "+", "-", "<", and ">"
