@@ -1,0 +1,10 @@
+Signatures:
+
+ADT: Nat
+
+    zero  :            -> Nat
+    add   : n * m      -> Nat
+ 
+ Equations:
+    
+    (add m m) = m

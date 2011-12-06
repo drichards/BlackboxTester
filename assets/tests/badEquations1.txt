@@ -1,0 +1,9 @@
+Signatures:
+
+ADT: Nat
+
+    zero  :            -> Nat
+ 
+ Equations:
+    
+    (foo) = #t

@@ -91,10 +91,6 @@ public class FunctionCall implements IFunctionCall {
 
 	@Override
 	public String getComparator() {
-		//if(this.methodName.equals("+") || this.methodName.equals("-")) {
-			return "poop";
-		//} else {
-			//return null;
-		//}
+		return null;
 	}
 }

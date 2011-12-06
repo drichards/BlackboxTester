@@ -12,10 +12,6 @@ import blackboxTester.ast.generator.RandomPrimitiveGenerator;
  */
 public abstract class PrimitiveAST implements AST {
 	protected PrimitiveAST() {}
-	
-	public String getComparator() {
-		return null;
-	}
 
 	@Override
 	public boolean isPrimitive() {
@@ -201,8 +197,15 @@ public abstract class PrimitiveAST implements AST {
 		
 		@Override
 		public String getComparator() {
-			//TODO Is this always "="?
-			return this.args.get(0).getComparator();
+			if (operation.equals(">") || 
+				operation.equals("<") || 
+				operation.equals("=") || 
+				operation.equals("not")) 
+			{
+				return "equal?";
+			} else {
+				return "=";
+			}
 		}
 	}
 }

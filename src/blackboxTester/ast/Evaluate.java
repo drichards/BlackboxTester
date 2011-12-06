@@ -24,7 +24,11 @@ import blackboxTester.parser.ast.Variable;
  */
 public class Evaluate  {
 	
-	private static final int MAX_REWRITE_ATTEMPTS = 100;
+	/**
+	 * The maximum number of times we'll attempt to rewrite an equation
+	 * before determining that it's an infinite loop.
+	 */
+	private static final int MAX_REWRITE_ATTEMPTS = 1000;
 
 	/**
 	 * Reduces all the ASTs using the provided equations. Replace will ignore 
@@ -104,7 +108,7 @@ public class Evaluate  {
 		for(int index = 0; index < functionArgs.size(); index++) {
 			AST arg = functionArgs.get(index);
 			if (!arg.isFullyReduced()) {
-				AST newArg = rewrite(arg, equations, 0);
+				AST newArg = rewrite(arg, equations, counter + 1);
 				if (newArg != null){
 					functionArgs.set(index, newArg);
 					rewritten = true;
@@ -124,7 +128,7 @@ public class Evaluate  {
 					
 					// recursively rewrite the equation, incrementing the
 					// recursion counter
-					newAST = rewrite(newAST, equations, ++counter);
+					newAST = rewrite(newAST, equations, counter + 1);
 					
 					// update it again if we successfully reduced again
 					if (newAST != null) {
@@ -269,7 +273,7 @@ public class Evaluate  {
 	 * @param env An environment mapping variables to ASTs.
 	 * @return A new AST rewritten from the right hand side and the environment.
 	 */
-	private AST rewriteWithEnv(RHS rightHandside, HashMap<String, AST> env) {
+	 AST rewriteWithEnv(RHS rightHandside, HashMap<String, AST> env) {
 		if (rightHandside instanceof Variable) {
 			return env.get(((Variable)rightHandside).getName());
 		} else if (rightHandside instanceof RHSTrue) {
